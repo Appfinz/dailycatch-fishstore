@@ -13,8 +13,9 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd pdo pdo_sqlite pdo_mysql bcmath
 
-# Ensure single MPM module (mpm_prefork) and enable mod_rewrite
-RUN a2dismod mpm_event mpm_worker || true && a2enmod mpm_prefork rewrite
+# Remove any conflicting Apache MPM modules and strictly enable mpm_prefork + rewrite
+RUN rm -f /etc/apache2/mods-enabled/mpm_*.load /etc/apache2/mods-enabled/mpm_*.conf \
+    && a2enmod mpm_prefork rewrite
 
 # Set working directory
 WORKDIR /var/www/html
@@ -40,7 +41,7 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # Create startup script
 RUN echo '#!/bin/bash\n\
 touch /var/www/html/database/database.sqlite\n\
-chown www-data:www-data /var/www/html/database/database.sqlite\n\
+chown -R www-data:www-data /var/www/html/database /var/www/html/storage /var/www/html/bootstrap/cache\n\
 php artisan migrate:fresh --seed --force\n\
 php artisan config:cache\n\
 php artisan route:cache\n\
