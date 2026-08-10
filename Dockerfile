@@ -28,9 +28,7 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 
 # Create startup script
 RUN echo '#!/bin/bash\n\
-if [ ! -f /var/www/html/.env ]; then\n\
-    cp /var/www/html/.env.example /var/www/html/.env\n\
-fi\n\
+cp /var/www/html/.env.example /var/www/html/.env\n\
 touch /var/www/html/database/database.sqlite\n\
 chown -R www-data:www-data /var/www/html/database /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/.env\n\
 php artisan key:generate --force\n\
