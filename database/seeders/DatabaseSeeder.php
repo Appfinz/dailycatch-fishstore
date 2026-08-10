@@ -155,6 +155,7 @@ class DatabaseSeeder extends Seeder
                 'rating' => 4.9,
                 'reviews_count' => 128,
                 'is_featured' => true,
+                'has_weight_variation' => true,
             ],
             [
                 'category_id' => $catSeaFish->id,
@@ -174,6 +175,7 @@ class DatabaseSeeder extends Seeder
                 'rating' => 4.8,
                 'reviews_count' => 84,
                 'is_featured' => true,
+                'has_weight_variation' => true,
             ],
             [
                 'category_id' => $catSeaFish->id,
@@ -193,6 +195,7 @@ class DatabaseSeeder extends Seeder
                 'rating' => 4.7,
                 'reviews_count' => 92,
                 'is_featured' => false,
+                'has_weight_variation' => false,
             ],
             [
                 'category_id' => $catSeaFish->id,
@@ -212,6 +215,7 @@ class DatabaseSeeder extends Seeder
                 'rating' => 4.8,
                 'reviews_count' => 76,
                 'is_featured' => true,
+                'has_weight_variation' => true,
             ],
             [
                 'category_id' => $catSeaFish->id,
@@ -231,6 +235,7 @@ class DatabaseSeeder extends Seeder
                 'rating' => 4.9,
                 'reviews_count' => 110,
                 'is_featured' => false,
+                'has_weight_variation' => false,
             ],
             [
                 'category_id' => $catSeaFish->id,
@@ -250,6 +255,7 @@ class DatabaseSeeder extends Seeder
                 'rating' => 4.9,
                 'reviews_count' => 64,
                 'is_featured' => true,
+                'has_weight_variation' => true,
             ],
             [
                 'category_id' => $catSeaFish->id,
@@ -269,6 +275,7 @@ class DatabaseSeeder extends Seeder
                 'rating' => 4.7,
                 'reviews_count' => 48,
                 'is_featured' => false,
+                'has_weight_variation' => true,
             ],
             [
                 'category_id' => $catSeaFish->id,
@@ -288,6 +295,7 @@ class DatabaseSeeder extends Seeder
                 'rating' => 4.8,
                 'reviews_count' => 52,
                 'is_featured' => false,
+                'has_weight_variation' => true,
             ],
 
             // River & Lake Fish
@@ -309,6 +317,7 @@ class DatabaseSeeder extends Seeder
                 'rating' => 4.8,
                 'reviews_count' => 95,
                 'is_featured' => true,
+                'has_weight_variation' => true,
             ],
 
             // Shrimps & Prawns
@@ -330,6 +339,7 @@ class DatabaseSeeder extends Seeder
                 'rating' => 4.9,
                 'reviews_count' => 140,
                 'is_featured' => true,
+                'has_weight_variation' => false,
             ],
             [
                 'category_id' => $catPrawns->id,
@@ -349,6 +359,7 @@ class DatabaseSeeder extends Seeder
                 'rating' => 5.0,
                 'reviews_count' => 88,
                 'is_featured' => true,
+                'has_weight_variation' => false,
             ],
 
             // Crabs & Squid
@@ -370,6 +381,7 @@ class DatabaseSeeder extends Seeder
                 'rating' => 4.9,
                 'reviews_count' => 102,
                 'is_featured' => true,
+                'has_weight_variation' => true,
             ],
             [
                 'category_id' => $catCrabSquid->id,
@@ -389,6 +401,7 @@ class DatabaseSeeder extends Seeder
                 'rating' => 4.7,
                 'reviews_count' => 60,
                 'is_featured' => false,
+                'has_weight_variation' => false,
             ],
 
             // Ready to Cook Marinated
@@ -410,6 +423,7 @@ class DatabaseSeeder extends Seeder
                 'rating' => 5.0,
                 'reviews_count' => 74,
                 'is_featured' => true,
+                'has_weight_variation' => true,
             ],
 
             // Combos
@@ -431,6 +445,7 @@ class DatabaseSeeder extends Seeder
                 'rating' => 5.0,
                 'reviews_count' => 156,
                 'is_featured' => true,
+                'has_weight_variation' => true,
             ],
             [
                 'category_id' => $catCombos->id,
@@ -450,6 +465,7 @@ class DatabaseSeeder extends Seeder
                 'rating' => 4.9,
                 'reviews_count' => 64,
                 'is_featured' => true,
+                'has_weight_variation' => true,
             ],
         ];
 
@@ -524,9 +540,18 @@ class DatabaseSeeder extends Seeder
         Setting::set('cancellation_time_minutes', '2', 'Order cancellation window in minutes');
         Setting::set('default_delivery_radius_km', '3.0', 'Free/standard delivery radius in kilometers');
         Setting::set('whatsapp_number', '918778199218', 'Official store WhatsApp contact number');
-        Setting::set('delivery_fee', '35', 'Standard delivery fee in INR');
+        Setting::set('delivery_base_fee', '35', 'Standard delivery fee in INR');
+        Setting::set('delivery_free_threshold', '499', 'Free delivery threshold in INR');
+        Setting::set('delivery_max_distance_km', '3.0', 'Max delivery distance in KM');
+        Setting::set('preorder_discount_amount', '20', 'Preorder discount amount in INR');
         Setting::set('shop_address', '22g, Thiruvalluvar street, East tambaram, Chennai-59', 'Primary physical store address');
         Setting::set('shop_phone', '91 8778199218', 'Customer care phone number');
         Setting::set('shop_email', 'support@dailycatchfishshop.com', 'Store support email');
+
+        // Firebase Web Config for 100% Free Real SMS OTPs
+        Setting::set('firebase_api_key', 'AIzaSyBh-jaoERjJZE3Eyzoz-oD-r3RWaJbPVl0');
+        Setting::set('firebase_auth_domain', 'dailycatch-c0df9.firebaseapp.com');
+        Setting::set('firebase_project_id', 'dailycatch-c0df9');
+        Setting::set('firebase_app_id', '1:616775362484:web:3444b9aebe93c6fbfcf4e1');
     }
 }
