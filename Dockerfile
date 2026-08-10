@@ -30,10 +30,10 @@ RUN mkdir -p /var/www/html/database /var/www/html/storage/framework/views /var/w
 # Create startup script
 RUN echo '#!/bin/bash\n\
 cp /var/www/html/.env.example /var/www/html/.env\n\
+echo "APP_KEY=base64:WIXsUSboEG0mohfNZ/EZHMfHKY1sC2efFWDpsQVpmr8=" >> /var/www/html/.env\n\
 mkdir -p /var/www/html/database /var/www/html/storage/framework/views /var/www/html/storage/framework/sessions /var/www/html/storage/framework/cache\n\
 touch /var/www/html/database/database.sqlite\n\
 chmod -R 777 /var/www/html/database /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/.env\n\
-php artisan key:generate --force\n\
 php artisan migrate:fresh --seed --force\n\
 php artisan config:clear\n\
 php artisan route:clear\n\
