@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\LocationApiController;
 use App\Http\Controllers\Api\OrderApiController;
 use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\CustomerAddressController;
+use App\Http\Controllers\Api\OtpApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +35,7 @@ Route::prefix('v1')->group(function () {
     // Mobile OTP Authentication Flow
     Route::post('/auth/send-otp', [CustomerAuthController::class, 'sendOtp']);
     Route::post('/auth/verify-otp', [CustomerAuthController::class, 'verifyOtp']);
+    Route::post('/auth/firebase-verify', [OtpApiController::class, 'firebaseVerify']);
     Route::get('/auth/me', [CustomerAuthController::class, 'me']);
     Route::post('/auth/logout', [CustomerAuthController::class, 'logout']);
 

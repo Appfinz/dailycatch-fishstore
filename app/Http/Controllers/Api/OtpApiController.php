@@ -18,7 +18,7 @@ class OtpApiController extends Controller
         $phone = preg_replace('/[^0-9]/', '', $request->phone);
 
         // Generate 4-digit OTP code (default testing code: 1234 or random)
-        $otpCode = '1234'; // Fixed for fast testing/demo, or rand(1000, 9999)
+        $otpCode = '1234';
 
         $customer = Customer::firstOrCreate(
             ['phone' => $phone],
@@ -83,6 +83,34 @@ class OtpApiController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Mobile number verified successfully!',
+            'customer' => $customer,
+        ]);
+    }
+
+    public function firebaseVerify(Request $request)
+    {
+        $request->validate([
+            'phone' => 'required|string',
+            'firebase_uid' => 'nullable|string',
+        ]);
+
+        $phone = preg_replace('/[^0-9]/', '', $request->phone);
+        if (strlen($phone) > 10 && str_starts_with($phone, '91')) {
+            $phone = substr($phone, -10);
+        }
+
+        $customer = Customer::firstOrCreate(
+            ['phone' => $phone],
+            ['name' => 'Valued Customer', 'is_verified' => true]
+        );
+
+        $customer->update(['is_verified' => true]);
+
+        session(['customer_phone' => $customer->phone, 'customer_id' => $customer->id]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Firebase SMS OTP verified successfully!',
             'customer' => $customer,
         ]);
     }

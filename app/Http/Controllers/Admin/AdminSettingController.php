@@ -21,6 +21,10 @@ class AdminSettingController extends Controller
             'whatsapp_number' => Setting::get('whatsapp_number', '918778199218'),
             'shop_address' => Setting::get('shop_address', '22g, Thiruvalluvar street, East tambaram, Chennai-59'),
             'shop_phone' => Setting::get('shop_phone', '91 8778199218'),
+            'firebase_api_key' => Setting::get('firebase_api_key', ''),
+            'firebase_auth_domain' => Setting::get('firebase_auth_domain', ''),
+            'firebase_project_id' => Setting::get('firebase_project_id', ''),
+            'firebase_app_id' => Setting::get('firebase_app_id', ''),
         ];
         return view('admin.settings.index', compact('settings'));
     }
@@ -36,6 +40,12 @@ class AdminSettingController extends Controller
         Setting::set('whatsapp_number', $request->whatsapp_number ?: '918778199218');
         Setting::set('shop_address', $request->shop_address ?: '22g, Thiruvalluvar street, East tambaram, Chennai-59');
         Setting::set('shop_phone', $request->shop_phone ?: '91 8778199218');
+
+        // Save Firebase Config
+        Setting::set('firebase_api_key', $request->firebase_api_key ?: '');
+        Setting::set('firebase_auth_domain', $request->firebase_auth_domain ?: '');
+        Setting::set('firebase_project_id', $request->firebase_project_id ?: '');
+        Setting::set('firebase_app_id', $request->firebase_app_id ?: '');
 
         return redirect()->back()->with('success', 'Store settings updated successfully!');
     }

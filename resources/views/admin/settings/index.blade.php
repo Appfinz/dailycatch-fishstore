@@ -6,7 +6,7 @@
 <div class="space-y-6 max-w-4xl">
     <div>
         <h1 class="text-2xl font-black text-brand-navy">Store Operations & Settings</h1>
-        <p class="text-xs text-slate-500 font-medium">Configure store location, delivery fee rules, pre-order discounts, WhatsApp number, and order cancellation window</p>
+        <p class="text-xs text-slate-500 font-medium">Configure store location, delivery fee rules, pre-order discounts, WhatsApp number, and Firebase Real SMS OTP settings</p>
     </div>
 
     <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm">
@@ -60,6 +60,41 @@
                 <div>
                     <label class="block text-slate-700 mb-1">Customer Support Phone Number *</label>
                     <input type="text" name="shop_phone" value="{{ $settings['shop_phone'] }}" required class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-brand-navy focus:outline-none focus:border-brand-blue">
+                </div>
+            </div>
+
+            <!-- Firebase Phone Auth (10,000 FREE Real SMS/month) -->
+            <div class="border-t border-slate-100 pt-6 space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="font-extrabold text-sm text-brand-navy flex items-center gap-2">
+                            <i class="fa-solid fa-fire text-amber-500"></i> Firebase Phone Authentication (10,000 FREE Real SMS/month)
+                        </h3>
+                        <p class="text-[11px] text-slate-500 font-medium mt-0.5">Paste your free Firebase Web App config keys to enable real SMS OTP sending.</p>
+                    </div>
+                    <span class="bg-amber-100 text-amber-900 text-[10px] font-bold px-2.5 py-1 rounded-full border border-amber-300">100% Free Plan</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-slate-700 mb-1">Firebase API Key (`apiKey`)</label>
+                        <input type="text" name="firebase_api_key" value="{{ $settings['firebase_api_key'] }}" placeholder="AIzaSy..." class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 font-mono text-brand-navy focus:outline-none focus:border-brand-blue">
+                    </div>
+
+                    <div>
+                        <label class="block text-slate-700 mb-1">Firebase Auth Domain (`authDomain`)</label>
+                        <input type="text" name="firebase_auth_domain" value="{{ $settings['firebase_auth_domain'] }}" placeholder="project.firebaseapp.com" class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 font-mono text-brand-navy focus:outline-none focus:border-brand-blue">
+                    </div>
+
+                    <div>
+                        <label class="block text-slate-700 mb-1">Firebase Project ID (`projectId`)</label>
+                        <input type="text" name="firebase_project_id" value="{{ $settings['firebase_project_id'] }}" placeholder="dailycatch-12345" class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 font-mono text-brand-navy focus:outline-none focus:border-brand-blue">
+                    </div>
+
+                    <div>
+                        <label class="block text-slate-700 mb-1">Firebase App ID (`appId`)</label>
+                        <input type="text" name="firebase_app_id" value="{{ $settings['firebase_app_id'] }}" placeholder="1:12345:web:6789" class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 font-mono text-brand-navy focus:outline-none focus:border-brand-blue">
+                    </div>
                 </div>
             </div>
 

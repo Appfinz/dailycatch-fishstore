@@ -1,23 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Daily Catch Fish Shop - Fresh Fish Delivered Today')</title>
-    
-    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome 6 Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- Leaflet CSS for Map Picker -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <title>@yield('title', 'Daily Catch Fish Shop - Freshness Delivered to Your Home')</title>
 
-    <!-- Tailwind CSS CDN -->
+    <!-- TailwindCSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -25,52 +14,53 @@
                 extend: {
                     colors: {
                         brand: {
-                            navy: '#081E3F',       /* Dark Navy in Reference */
-                            deepnavy: '#06152B',   /* Footer Navy */
-                            blue: '#1E6DEB',       /* Royal Blue Buttons */
-                            hoverblue: '#1557C0',
-                            lightblue: '#EBF3FE',  /* Light Blue Card Fill */
-                            sky: '#D8ECF8',        /* Hero Sky Blue Gradient */
+                            navy: '#081E3F',
+                            blue: '#1E6DEB',
+                            sky: '#D8ECF8',
+                            bg: '#F8FAFC'
                         }
                     },
                     fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                        sans: ['Outfit', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Leaflet CSS for Map Picker -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Firebase Web SDK v10 (Compat) for 100% Free Real SMS OTPs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
     <style>
         body {
+            font-family: 'Outfit', sans-serif;
             background-color: #F8FAFC;
-            color: #0F172A;
-            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
-            overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
+            color: #081E3F;
         }
 
         .btn-brand-blue {
             background-color: #1E6DEB;
-            color: #FFFFFF;
-            font-weight: 700;
-            transition: all 0.2s ease;
+            transition: all 0.2s ease-in-out;
         }
         .btn-brand-blue:hover {
-            background-color: #1557C0;
-            box-shadow: 0 4px 12px rgba(30, 109, 235, 0.3);
+            background-color: #1555BD;
+            transform: translateY(-1px);
         }
 
-        .card-shadow {
-            box-shadow: 0 2px 12px rgba(8, 30, 63, 0.05);
-            transition: all 0.25s ease;
-        }
-        .card-shadow:hover {
-            box-shadow: 0 8px 24px rgba(8, 30, 63, 0.1);
-            transform: translateY(-2px);
-        }
-
-        /* Hide scrollbars for smooth touch swipe */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -83,7 +73,10 @@
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-brand-blue selection:text-white pb-16 md:pb-0">
 
-    <!-- GLOBAL UNSERVICEABLE LOCATION BANNER (Displays if user location > 3KM) -->
+    <!-- Container for Firebase Invisible reCAPTCHA -->
+    <div id="recaptcha-container"></div>
+
+    <!-- GLOBAL UNSERVICEABLE LOCATION BANNER -->
     <div id="globalUnserviceableBanner" class="bg-amber-400 text-slate-950 text-xs font-bold py-2.5 px-4 shadow-md hidden border-b border-amber-500 z-50">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
             <div class="flex items-center gap-2">
@@ -138,273 +131,273 @@
             </div>
 
             <!-- Deliver To Location & User Actions -->
-            <div class="flex items-center gap-3 sm:gap-6 shrink-0">
-                
-                <!-- Deliver To Pin (Desktop) -->
-                <div class="hidden lg:flex items-center gap-2 text-xs border-r border-slate-200 pr-6">
-                    <div class="w-8 h-8 rounded-full bg-brand-lightblue text-brand-blue flex items-center justify-center">
-                        <i class="fa-solid fa-location-dot"></i>
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-slate-400 font-semibold block">Deliver to</span>
-                        <span id="headerLocationText" onclick="checkGlobalLocation(true)" class="font-bold text-slate-800 text-xs flex items-center gap-1 cursor-pointer hover:text-brand-blue" title="Click to detect your current location">
-                            East Tambaram, Chennai <i class="fa-solid fa-chevron-down text-[10px]"></i>
-                        </span>
-                    </div>
-                </div>
+            <div class="flex items-center gap-2 sm:gap-4">
+                <a href="{{ route('locations') }}" class="hidden lg:flex items-center gap-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-full text-xs font-semibold text-brand-navy transition-all">
+                    <i class="fa-solid fa-location-dot text-brand-blue"></i>
+                    <span id="headerStoreText">East Tambaram Store</span>
+                </a>
 
-                <!-- Customer OTP Auth Account Trigger -->
+                <!-- User Auth Profile -->
                 <div id="headerAuthContainer">
-                    <button onclick="openOtpModal()" class="flex flex-col items-center text-slate-800 hover:text-brand-blue transition-colors">
-                        <i class="fa-solid fa-user-circle text-lg sm:text-xl text-brand-navy"></i>
-                        <span class="text-[10px] sm:text-[11px] font-extrabold mt-0.5">Login</span>
+                    <button onclick="openOtpModal()" class="bg-brand-navy text-white text-xs font-bold px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full hover:bg-slate-900 transition-all flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-user text-sky-300"></i>
+                        <span>Log In</span>
                     </button>
                 </div>
 
-                <!-- Cart Button -->
-                <button onclick="toggleCartDrawer()" class="flex flex-col items-center text-slate-800 hover:text-brand-blue relative group">
-                    <div class="relative">
-                        <i class="fa-solid fa-basket-shopping text-lg sm:text-xl text-brand-navy group-hover:text-brand-blue"></i>
-                        <span id="headerCartBadge" class="absolute -top-2 -right-2.5 bg-brand-blue text-white text-[10px] font-black w-4 sm:w-5 h-4 sm:h-5 rounded-full flex items-center justify-center border-2 border-white shadow">0</span>
-                    </div>
-                    <span class="text-[10px] sm:text-[11px] font-extrabold mt-0.5">Cart</span>
+                <!-- Shopping Cart Button -->
+                <button onclick="openCartDrawer()" class="relative bg-brand-sky/60 hover:bg-brand-sky text-brand-navy p-2.5 sm:p-3 rounded-full transition-all flex items-center justify-center">
+                    <i class="fa-solid fa-basket-shopping text-base sm:text-lg text-brand-blue"></i>
+                    <span id="headerCartBadge" class="absolute -top-1 -right-1 bg-brand-blue text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm">0</span>
                 </button>
-
-                <!-- Admin Link -->
-                <a href="{{ route('admin.dashboard') }}" class="bg-slate-100 hover:bg-slate-200 text-brand-navy p-2 sm:p-2.5 rounded-full text-xs font-bold transition-all" title="Admin Dashboard">
-                    <i class="fa-solid fa-user-shield text-xs sm:text-sm"></i>
-                </a>
             </div>
-
         </div>
 
-        <!-- MOBILE SEARCH BAR (Visible only on mobile screens) -->
-        <div class="px-4 pb-2.5 pt-1 md:hidden bg-white border-b border-slate-100">
+        <!-- Mobile Search Bar directly under logo -->
+        <div class="px-4 pb-3 md:hidden">
             <form action="{{ route('catalog') }}" method="GET" class="relative">
                 <input type="text" name="search" value="{{ request('search') }}" 
-                       placeholder="Search for fish, prawns, crabs..." 
-                       class="w-full bg-slate-100 border border-slate-200 text-xs font-bold text-slate-800 rounded-full pl-4 pr-10 py-2.5 focus:outline-none focus:bg-white focus:border-brand-blue placeholder:text-slate-400">
-                <button type="submit" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-blue">
+                       placeholder="Search fresh fish, prawns, crabs..." 
+                       class="w-full bg-slate-100 border border-slate-200 text-xs text-slate-800 rounded-full pl-4 pr-10 py-2.5 focus:outline-none focus:bg-white focus:border-brand-blue">
+                <button type="submit" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400">
                     <i class="fa-solid fa-magnifying-glass text-xs"></i>
                 </button>
             </form>
         </div>
 
-        <!-- SUB-HEADER NAVIGATION (Horizontal touch-swipe scroll) -->
-        <div class="border-t border-slate-100 bg-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-5 sm:gap-8 overflow-x-auto py-2.5 no-scrollbar text-xs font-bold text-slate-700">
-                <a href="{{ route('catalog', ['category' => 'sea-fish']) }}" class="hover:text-brand-blue whitespace-nowrap shrink-0 {{ request('category') === 'sea-fish' ? 'text-brand-blue font-extrabold' : '' }}">Fish</a>
-                <a href="{{ route('catalog', ['category' => 'prawns']) }}" class="hover:text-brand-blue whitespace-nowrap shrink-0 {{ request('category') === 'prawns' ? 'text-brand-blue font-extrabold' : '' }}">Prawn</a>
-                <a href="{{ route('catalog', ['category' => 'crab-squid']) }}" class="hover:text-brand-blue whitespace-nowrap shrink-0 {{ request('category') === 'crab-squid' ? 'text-brand-blue font-extrabold' : '' }}">Crab</a>
-                <a href="{{ route('catalog') }}" class="text-slate-400 whitespace-nowrap shrink-0 cursor-not-allowed">Chicken <span class="text-[9px] bg-slate-100 text-slate-500 px-1 py-0.5 rounded font-semibold">Soon</span></a>
-                <a href="{{ route('catalog') }}" class="text-slate-400 whitespace-nowrap shrink-0 cursor-not-allowed">Mutton <span class="text-[9px] bg-slate-100 text-slate-500 px-1 py-0.5 rounded font-semibold">Soon</span></a>
-                <a href="{{ route('catalog') }}" class="hover:text-brand-blue whitespace-nowrap shrink-0">Other Seafood</a>
-                <a href="{{ route('combos') }}" class="hover:text-brand-blue whitespace-nowrap shrink-0 text-amber-600 font-extrabold">Offers & Combos</a>
-                <a href="{{ route('recipes') }}" class="hover:text-brand-blue whitespace-nowrap shrink-0">Recipes & Tips</a>
-                <a href="{{ route('locations') }}" class="hover:text-brand-blue whitespace-nowrap shrink-0">Store Location</a>
+        <!-- Touch Horizontal Category Scroll -->
+        <div class="bg-slate-50 border-t border-slate-200 px-4 py-2 text-xs font-bold">
+            <div class="max-w-7xl mx-auto flex items-center gap-4 sm:gap-8 overflow-x-auto no-scrollbar whitespace-nowrap">
+                <a href="{{ route('home') }}" class="hover:text-brand-blue text-slate-700">Home</a>
+                <a href="{{ route('catalog') }}" class="hover:text-brand-blue text-slate-700">All Fish Catalog</a>
+                <a href="{{ route('catalog', ['category' => 'sea-fish']) }}" class="hover:text-brand-blue text-slate-700">Sea Fish</a>
+                <a href="{{ route('catalog', ['category' => 'prawns']) }}" class="hover:text-brand-blue text-slate-700">Prawns</a>
+                <a href="{{ route('catalog', ['category' => 'crabs']) }}" class="hover:text-brand-blue text-slate-700">Crabs</a>
+                <a href="{{ route('combos') }}" class="hover:text-brand-blue text-slate-700">Seafood Combos</a>
+                <a href="{{ route('recipes.index') }}" class="hover:text-brand-blue text-slate-700">Fish Recipes</a>
+                <a href="{{ route('locations') }}" class="hover:text-brand-blue text-slate-700">Store Locator</a>
             </div>
         </div>
     </header>
 
-    <!-- Main Content Body -->
+    <!-- MAIN CONTENT -->
     <main class="flex-grow">
         @yield('content')
     </main>
 
-    <!-- MOBILE OTP LOGIN MODAL -->
-    <div id="otpModalBackdrop" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-md w-full p-5 sm:p-8 shadow-2xl border border-slate-200 space-y-5 relative">
-            <button onclick="closeOtpModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 text-lg p-1">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
-            <div class="text-center space-y-2">
-                <div class="w-12 h-12 rounded-full bg-brand-lightblue text-brand-blue flex items-center justify-center font-bold text-xl mx-auto">
-                    <i class="fa-solid fa-mobile-screen"></i>
+    <!-- 3. FOOTER -->
+    <footer class="bg-brand-navy text-white mt-12 border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2">
+                        <img src="{{ asset('images/logo.jpeg') }}" class="h-10 w-10 rounded-full border border-white/20">
+                        <span class="text-xl font-black text-white font-display">Daily Catch</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">Freshness delivered to your home. Premium harbor-fresh sea fish weighed live and prepped to your exact cutting style.</p>
                 </div>
-                <h3 class="text-xl font-black text-brand-navy font-display">Customer Mobile Login</h3>
-                <p class="text-xs text-slate-500 font-medium">Enter your 10-digit mobile number to receive OTP</p>
+
+                <div>
+                    <h4 class="font-extrabold text-xs text-sky-300 uppercase tracking-wider mb-3">Shop Location</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed font-medium">
+                        22g, Thiruvalluvar Street,<br>
+                        East Tambaram, Chennai - 600059<br>
+                        Landmark: Near Tambaram Station
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="font-extrabold text-xs text-sky-300 uppercase tracking-wider mb-3">Service Hours</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed font-medium">
+                        Monday - Sunday: 06:00 AM - 08:00 PM<br>
+                        Same-Day Ice Box Delivery: 3.0 KM Radius
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="font-extrabold text-xs text-sky-300 uppercase tracking-wider mb-3">Customer Support</h4>
+                    <a href="tel:+918778199218" class="text-sm font-black text-white hover:text-sky-300 flex items-center gap-2 mb-2">
+                        <i class="fa-solid fa-phone text-sky-400"></i> +91 8778199218
+                    </a>
+                    <a href="https://wa.me/918778199218" target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all">
+                        <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp Support
+                    </a>
+                </div>
             </div>
 
-            <!-- Step 1: Phone Number Input -->
-            <form id="otpStep1Form" onsubmit="handleSendOtp(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-extrabold text-brand-navy mb-1 uppercase tracking-wider">Mobile Number</label>
-                    <div class="relative">
-                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 font-extrabold text-xs text-slate-500">+91</span>
-                        <input type="tel" id="mobileInput" maxlength="10" required placeholder="9876543210" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-12 pr-4 py-3 text-xs font-bold text-brand-navy focus:outline-none focus:border-brand-blue">
-                    </div>
-                </div>
+            <div class="border-t border-white/10 mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400 gap-4">
+                <p>© {{ date('Y') }} Daily Catch Fish Shop. All rights reserved.</p>
+                <p>East Tambaram • Chennai - 59</p>
+            </div>
+        </div>
+    </footer>
 
-                <button type="submit" id="sendOtpBtn" class="w-full btn-brand-blue py-3.5 rounded-xl text-xs font-black uppercase tracking-wider shadow-lg">
+    <!-- MOBILE STICKY BOTTOM NAVIGATION BAR -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-30 px-3 py-2 flex justify-around items-center text-[10px] font-bold text-slate-600 shadow-2xl">
+        <a href="{{ route('home') }}" class="flex flex-col items-center gap-0.5 {{ request()->routeIs('home') ? 'text-brand-blue' : '' }}">
+            <i class="fa-solid fa-house text-base"></i>
+            <span>Home</span>
+        </a>
+        <a href="{{ route('catalog') }}" class="flex flex-col items-center gap-0.5 {{ request()->routeIs('catalog') ? 'text-brand-blue' : '' }}">
+            <i class="fa-solid fa-fish text-base"></i>
+            <span>Fish Catalog</span>
+        </a>
+        <a href="javascript:void(0)" onclick="openCartDrawer()" class="flex flex-col items-center gap-0.5 text-brand-navy relative">
+            <i class="fa-solid fa-basket-shopping text-base text-brand-blue"></i>
+            <span>Cart</span>
+        </a>
+        <a href="{{ route('locations') }}" class="flex flex-col items-center gap-0.5 {{ request()->routeIs('locations') ? 'text-brand-blue' : '' }}">
+            <i class="fa-solid fa-location-dot text-base"></i>
+            <span>Store</span>
+        </a>
+    </nav>
+
+    <!-- SHOPPING CART SLIDE-OVER DRAWER -->
+    <div id="cartDrawerBackdrop" onclick="toggleCartDrawer()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden transition-opacity"></div>
+    <div id="cartDrawer" class="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+        <div class="p-4 sm:p-6 bg-brand-navy text-white flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-basket-shopping text-xl text-sky-300"></i>
+                <h3 class="font-extrabold text-base font-display">Your Fresh Catch Basket</h3>
+            </div>
+            <button onclick="toggleCartDrawer()" class="text-white/70 hover:text-white p-1">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <div id="cartDrawerItems" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4"></div>
+
+        <div class="p-4 sm:p-6 border-t border-slate-200 bg-slate-50 space-y-4">
+            <div class="space-y-1 text-xs">
+                <div class="flex justify-between text-slate-600 font-semibold">
+                    <span>Estimated Subtotal</span>
+                    <span id="drawerSubtotal" class="font-bold text-brand-navy">₹0.00</span>
+                </div>
+                <div class="flex justify-between text-base font-black text-brand-navy pt-2">
+                    <span>Estimated Total</span>
+                    <span id="drawerTotal" class="text-xl text-brand-blue">₹0.00</span>
+                </div>
+            </div>
+
+            <a href="{{ route('checkout') }}" class="w-full btn-brand-blue py-3.5 rounded-xl font-extrabold text-xs uppercase tracking-wider text-white text-center block shadow-lg">
+                Proceed to Checkout &rarr;
+            </a>
+        </div>
+    </div>
+
+    <!-- OTP AUTHENTICATION MODAL -->
+    <div id="otpModalBackdrop" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 sm:p-8 shadow-2xl border border-slate-100 text-center relative space-y-5">
+            <button onclick="closeOtpModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="w-12 h-12 bg-brand-sky rounded-2xl mx-auto flex items-center justify-center text-brand-blue text-xl font-bold">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+            </div>
+
+            <div>
+                <h3 class="font-extrabold text-lg text-brand-navy font-display">Customer Mobile Login</h3>
+                <p class="text-xs text-slate-500 mt-1 font-medium">Verify your mobile number to view saved addresses & place orders.</p>
+            </div>
+
+            <form id="otpStep1Form" onsubmit="handleSendOtp(event)" class="space-y-4">
+                <div class="relative">
+                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500">+91</span>
+                    <input type="tel" id="mobileInput" required placeholder="10 Digit Mobile Number" 
+                           class="w-full bg-slate-50 border border-slate-300 text-xs font-extrabold text-brand-navy rounded-xl pl-12 pr-4 py-3 focus:outline-none focus:border-brand-blue">
+                </div>
+                <button type="submit" id="sendOtpBtn" class="w-full btn-brand-blue text-white py-3 rounded-xl font-extrabold text-xs uppercase tracking-wider shadow">
                     Send Verification Code (OTP) &rarr;
                 </button>
             </form>
 
-            <!-- Step 2: OTP Entry Input (Hidden Initially) -->
             <form id="otpStep2Form" onsubmit="handleVerifyOtp(event)" class="space-y-4 hidden">
-                <div class="text-center bg-blue-50 p-3 rounded-2xl border border-blue-100">
-                    <span class="text-xs text-slate-600 font-semibold">Demo OTP Code: <strong class="text-brand-blue font-mono font-bold">1234</strong></span>
-                </div>
-
                 <div>
-                    <label class="block text-xs font-extrabold text-brand-navy mb-1 uppercase tracking-wider">Enter 4-Digit OTP</label>
-                    <input type="text" id="otpInput" maxlength="4" required placeholder="1234" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-center text-lg font-mono font-black tracking-widest text-brand-navy focus:outline-none focus:border-brand-blue">
+                    <input type="text" id="otpInput" required placeholder="Enter 6-Digit OTP Code" 
+                           class="w-full bg-slate-50 border border-slate-300 text-center text-base font-black tracking-widest text-brand-navy rounded-xl px-4 py-3 focus:outline-none focus:border-brand-blue">
+                    <span class="text-[10px] text-slate-400 font-semibold mt-1 block">Check your SMS inbox for code</span>
                 </div>
-
-                <button type="submit" id="verifyOtpBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3.5 rounded-xl text-xs font-black uppercase tracking-wider shadow-lg">
+                <button type="submit" id="verifyOtpBtn" class="w-full btn-brand-blue text-white py-3 rounded-xl font-extrabold text-xs uppercase tracking-wider shadow">
                     Verify & Login Now &rarr;
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- CART SLIDE-OVER DRAWER -->
-    <div id="cartDrawerBackdrop" class="fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-50 hidden transition-opacity" onclick="toggleCartDrawer()"></div>
-    <div id="cartDrawer" class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-white z-50 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
-        <div class="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-brand-navy text-white">
-            <div class="flex items-center gap-2">
-                <i class="fa-solid fa-basket-shopping text-sky-300"></i>
-                <h3 class="font-extrabold text-base font-display">Your Seafood Basket</h3>
-            </div>
-            <button onclick="toggleCartDrawer()" class="text-slate-300 hover:text-white text-lg p-1">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-
-        <div id="cartDrawerItems" class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4"></div>
-
-        <div class="p-4 sm:p-5 border-t border-slate-200 bg-slate-50 space-y-3">
-            <div class="flex justify-between text-xs font-medium text-slate-600">
-                <span>Estimated Subtotal</span>
-                <span id="drawerSubtotal" class="font-bold text-slate-900">₹0.00</span>
-            </div>
-            <div class="flex justify-between text-xs font-medium text-slate-600">
-                <span>Delivery Fee</span>
-                <span class="font-bold text-emerald-600">₹35.00</span>
-            </div>
-            <div class="flex justify-between text-base font-black text-brand-navy pt-2 border-t border-slate-200">
-                <span>Estimated Total</span>
-                <span id="drawerTotal" class="text-xl text-brand-blue">₹0.00</span>
-            </div>
-
-            <a href="{{ route('checkout') }}" class="w-full btn-brand-blue py-3.5 rounded-xl font-extrabold text-xs uppercase tracking-wider text-center block shadow-lg">
-                Proceed to Checkout (COD) &rarr;
-            </a>
-        </div>
-    </div>
-
-    <!-- FOOTER -->
-    <footer class="bg-brand-deepnavy text-slate-400 text-xs mt-auto border-t border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-            <div class="space-y-3">
-                <div class="flex items-center gap-3">
-                    <img src="{{ asset('images/logo.jpeg') }}" class="h-10 w-10 rounded-full border border-slate-700">
-                    <span class="text-lg font-black text-white font-display">Daily Catch FISH SHOP</span>
-                </div>
-                <p class="text-slate-400 text-[11px] leading-relaxed">
-                    Fresh seafood delivered to your doorstep. Handpicked. Hygienically cut. Delivered in ice box.
-                </p>
-            </div>
-
-            <div>
-                <h4 class="font-extrabold text-white text-xs uppercase tracking-wider mb-3">SHOP</h4>
-                <ul class="space-y-2 text-[11px]">
-                    <li><a href="{{ route('catalog', ['category' => 'sea-fish']) }}" class="hover:text-white">Fish</a></li>
-                    <li><a href="{{ route('catalog', ['category' => 'prawns']) }}" class="hover:text-white">Prawn</a></li>
-                    <li><a href="{{ route('catalog', ['category' => 'crab-squid']) }}" class="hover:text-white">Crab & Squid</a></li>
-                    <li><a href="{{ route('combos') }}" class="hover:text-white">Offers & Combos</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <h4 class="font-extrabold text-white text-xs uppercase tracking-wider mb-3">HELP & INFO</h4>
-                <ul class="space-y-2 text-[11px]">
-                    <li><a href="{{ route('locations') }}" class="hover:text-white">Track Your Order</a></li>
-                    <li><a href="{{ route('locations') }}" class="hover:text-white">Store Location</a></li>
-                    <li><a href="{{ route('recipes') }}" class="hover:text-white">Recipes & Cooking Tips</a></li>
-                    <li><a href="{{ route('locations') }}" class="hover:text-white">Delivery Policy (3KM Radius)</a></li>
-                </ul>
-            </div>
-
-            <div class="space-y-2">
-                <h4 class="font-extrabold text-white text-xs uppercase tracking-wider mb-3">CONTACT US</h4>
-                <p class="text-[11px] text-slate-300"><i class="fa-solid fa-phone text-brand-blue mr-2"></i> +91 8778199218</p>
-                <p class="text-[11px] text-slate-300"><i class="fa-solid fa-location-dot text-brand-blue mr-2"></i> East Tambaram, Chennai - 600059</p>
-            </div>
-        </div>
-
-        <div class="border-t border-slate-800 py-4 text-center text-[10px] text-slate-500">
-            © {{ date('Y') }} Daily Catch Fish Shop. All rights reserved. Express 3KM Fresh Seafood Delivery.
-        </div>
-    </footer>
-
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
+    <!-- GLOBAL SCRIPTS -->
     <script>
         let currentCustomer = null;
 
-        function updateGlobalLocationUI(isWithin, distanceKm) {
-            sessionStorage.setItem('dc_user_dist_km', distanceKm);
-            sessionStorage.setItem('dc_user_within_radius', isWithin ? 'true' : 'false');
+        // Firebase Configuration for Real SMS OTPs
+        const firebaseConfig = {
+            apiKey: "{{ \App\Models\Setting::get('firebase_api_key', '') }}",
+            authDomain: "{{ \App\Models\Setting::get('firebase_auth_domain', '') }}",
+            projectId: "{{ \App\Models\Setting::get('firebase_project_id', '') }}",
+            appId: "{{ \App\Models\Setting::get('firebase_app_id', '') }}"
+        };
 
-            const banner = document.getElementById('globalUnserviceableBanner');
-            const distText = document.getElementById('globalDistText');
-            const headerLoc = document.getElementById('headerLocationText');
+        let confirmationResult = null;
+        let recaptchaVerifier = null;
 
-            if (!isWithin) {
-                if (banner) {
-                    banner.classList.remove('hidden');
-                    if (distText) distText.innerText = distanceKm + ' KM';
-                }
-                if (headerLoc) {
-                    headerLoc.innerHTML = `<span class="text-rose-600 font-extrabold flex items-center gap-1">⚠️ Outside 3KM (${distanceKm} KM)</span>`;
-                }
-            } else {
-                if (banner) banner.classList.add('hidden');
-                if (headerLoc) {
-                    headerLoc.innerHTML = `East Tambaram, Chennai <i class="fa-solid fa-chevron-down text-[10px]"></i>`;
-                }
-            }
+        if (firebaseConfig.apiKey && firebaseConfig.apiKey !== '') {
+            try {
+                firebase.initializeApp(firebaseConfig);
+                recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+                    'size': 'invisible'
+                });
+            } catch(e) { console.error("Firebase Init Error:", e); }
         }
 
-        // Smart Location Check (Checks automatically on first visit & caches in sessionStorage)
+        // Global Location Check with SessionStorage Caching
         function checkGlobalLocation(forcePrompt = false) {
-            const cachedDist = sessionStorage.getItem('dc_user_dist_km');
+            const cachedKm = sessionStorage.getItem('dc_user_dist_km');
             const cachedWithin = sessionStorage.getItem('dc_user_within_radius');
 
-            // 1. If already determined in this session, reuse cached status immediately
-            if (!forcePrompt && cachedDist !== null && cachedWithin !== null) {
-                if (cachedDist !== 'denied') {
-                    updateGlobalLocationUI(cachedWithin === 'true', parseFloat(cachedDist));
-                }
+            if (cachedKm && cachedWithin && !forcePrompt) {
+                applyLocationBanner(parseFloat(cachedKm), cachedWithin === 'true');
                 return;
             }
 
-            // 2. On first visit OR when user clicks header location pin:
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(pos => {
+                navigator.geolocation.getCurrentPosition(async (pos) => {
                     let lat = pos.coords.latitude;
                     let lng = pos.coords.longitude;
 
-                    fetch('/api/v1/validate-location', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                        },
-                        body: JSON.stringify({ latitude: lat, longitude: lng })
-                    }).then(res => res.json()).then(data => {
-                        updateGlobalLocationUI(data.is_within_radius, data.distance_km);
-                    });
-                }, err => {
+                    try {
+                        const res = await fetch('/api/v1/validate-location', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                            },
+                            body: JSON.stringify({ latitude: lat, longitude: lng })
+                        });
+                        const data = await res.json();
+                        
+                        sessionStorage.setItem('dc_user_dist_km', data.distance_km);
+                        sessionStorage.setItem('dc_user_within_radius', data.is_within_radius ? 'true' : 'false');
+
+                        applyLocationBanner(data.distance_km, data.is_within_radius);
+                    } catch (e) { console.error(e); }
+                }, (err) => {
                     sessionStorage.setItem('dc_user_dist_km', 'denied');
                     sessionStorage.setItem('dc_user_within_radius', 'false');
-                    if (forcePrompt) {
-                        alert("Location permission denied or unavailable. Please use the location search box on homepage or checkout.");
-                    }
+                    if (forcePrompt) alert("Location permission denied or unavailable.");
                 });
+            }
+        }
+
+        function applyLocationBanner(distKm, isWithin) {
+            const banner = document.getElementById('globalUnserviceableBanner');
+            const distText = document.getElementById('globalDistText');
+            if (banner && distText) {
+                if (!isWithin && distKm > 0) {
+                    distText.innerText = distKm + ' KM';
+                    banner.classList.remove('hidden');
+                } else {
+                    banner.classList.add('hidden');
+                }
             }
         }
 
@@ -442,9 +435,27 @@
             const phone = document.getElementById('mobileInput').value;
             const btn = document.getElementById('sendOtpBtn');
 
-            btn.innerText = 'Sending OTP...';
+            btn.innerText = 'Sending Real SMS...';
             btn.disabled = true;
 
+            // If Real Firebase Config is present, send Real SMS via Firebase
+            if (firebaseConfig.apiKey && firebaseConfig.apiKey !== '' && recaptchaVerifier) {
+                const fullPhone = '+91' + phone.replace(/[^0-9]/g, '');
+                try {
+                    confirmationResult = await firebase.auth().signInWithPhoneNumber(fullPhone, recaptchaVerifier);
+                    document.getElementById('otpStep1Form').classList.add('hidden');
+                    document.getElementById('otpStep2Form').classList.remove('hidden');
+                    alert(`Real SMS OTP sent to ${fullPhone} via Firebase!`);
+                } catch(error) {
+                    console.error("Firebase SMS error:", error);
+                    alert("Firebase SMS Error: " + error.message);
+                }
+                btn.innerText = 'Send Verification Code (OTP) \u2192';
+                btn.disabled = false;
+                return;
+            }
+
+            // Fallback Demo Mode (1234) if Firebase keys not entered yet
             try {
                 const res = await fetch('/api/v1/auth/send-otp', {
                     method: 'POST',
@@ -478,6 +489,37 @@
             btn.innerText = 'Verifying...';
             btn.disabled = true;
 
+            // If Firebase real OTP sent
+            if (confirmationResult) {
+                try {
+                    const userCredential = await confirmationResult.confirm(otp);
+                    const user = userCredential.user;
+                    const res = await fetch('/api/v1/auth/firebase-verify', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({ phone: phone, firebase_uid: user.uid })
+                    });
+                    const data = await res.json();
+                    if (data.status === 'success') {
+                        closeOtpModal();
+                        checkCustomerAuth();
+                        if (window.location.pathname === '/checkout') window.location.reload();
+                    } else {
+                        alert(data.message || 'Verification failed');
+                    }
+                } catch(error) {
+                    alert("Incorrect OTP: " + error.message);
+                } finally {
+                    btn.innerText = 'Verify & Login Now \u2192';
+                    btn.disabled = false;
+                }
+                return;
+            }
+
+            // Fallback Demo OTP mode (1234)
             try {
                 const res = await fetch('/api/v1/auth/verify-otp', {
                     method: 'POST',
@@ -485,15 +527,13 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     },
-                    body: JSON.stringify({ phone: phone, otp: otp })
+                    body: JSON.stringify({ phone: phone, otp_code: otp })
                 });
                 const data = await res.json();
                 if (data.status === 'success') {
                     closeOtpModal();
                     checkCustomerAuth();
-                    if (window.location.pathname === '/checkout') {
-                        window.location.reload();
-                    }
+                    if (window.location.pathname === '/checkout') window.location.reload();
                 } else {
                     alert(data.message || 'Invalid OTP');
                 }
