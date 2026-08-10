@@ -24,13 +24,15 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-req=php+
 
 # Set permissions for storage, cache & database
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
+RUN mkdir -p /var/www/html/database /var/www/html/storage/framework/views /var/www/html/storage/framework/sessions /var/www/html/storage/framework/cache \
+    && chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
 
 # Create startup script
 RUN echo '#!/bin/bash\n\
 cp /var/www/html/.env.example /var/www/html/.env\n\
+mkdir -p /var/www/html/database /var/www/html/storage/framework/views /var/www/html/storage/framework/sessions /var/www/html/storage/framework/cache\n\
 touch /var/www/html/database/database.sqlite\n\
-chown -R www-data:www-data /var/www/html/database /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/.env\n\
+chmod -R 777 /var/www/html/database /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/.env\n\
 php artisan key:generate --force\n\
 php artisan migrate:fresh --seed --force\n\
 php artisan config:clear\n\
