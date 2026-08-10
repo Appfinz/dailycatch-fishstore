@@ -28,12 +28,16 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 
 # Create startup script
 RUN echo '#!/bin/bash\n\
+if [ ! -f /var/www/html/.env ]; then\n\
+    cp /var/www/html/.env.example /var/www/html/.env\n\
+fi\n\
 touch /var/www/html/database/database.sqlite\n\
-chown -R www-data:www-data /var/www/html/database /var/www/html/storage /var/www/html/bootstrap/cache\n\
+chown -R www-data:www-data /var/www/html/database /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/.env\n\
+php artisan key:generate --force\n\
 php artisan migrate:fresh --seed --force\n\
-php artisan config:cache\n\
-php artisan route:cache\n\
-php artisan view:cache\n\
+php artisan config:clear\n\
+php artisan route:clear\n\
+php artisan view:clear\n\
 exec php artisan serve --host=0.0.0.0 --port=${PORT:-8080}' > /usr/local/bin/start-container && chmod +x /usr/local/bin/start-container
 
 EXPOSE 8080
