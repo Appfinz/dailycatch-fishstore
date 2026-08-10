@@ -174,7 +174,7 @@
                 <a href="{{ route('catalog', ['category' => 'prawns']) }}" class="hover:text-brand-blue text-slate-700">Prawns</a>
                 <a href="{{ route('catalog', ['category' => 'crabs']) }}" class="hover:text-brand-blue text-slate-700">Crabs</a>
                 <a href="{{ route('combos') }}" class="hover:text-brand-blue text-slate-700">Seafood Combos</a>
-                <a href="{{ route('recipes.index') }}" class="hover:text-brand-blue text-slate-700">Fish Recipes</a>
+                <a href="{{ route('recipes') }}" class="hover:text-brand-blue text-slate-700">Fish Recipes</a>
                 <a href="{{ route('locations') }}" class="hover:text-brand-blue text-slate-700">Store Locator</a>
             </div>
         </div>
