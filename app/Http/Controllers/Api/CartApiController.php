@@ -28,14 +28,24 @@ class CartApiController extends Controller
         $estimatedSubtotal = 0;
 
         foreach ($cart as $key => $item) {
-            $product = Product::find($item['product_id']);
+            $product = Product::with('cuttingStyles')->find($item['product_id']);
             $cuttingStyle = isset($item['cutting_style_id']) ? CuttingStyle::find($item['cutting_style_id']) : null;
 
             if ($product) {
                 $unitPrice = $product->sale_price_per_kg ?: $product->price_per_kg;
-                $cuttingCharge = $cuttingStyle ? $cuttingStyle->additional_charge : 0;
-                $qty = (float) $item['qty_kg'];
 
+                // Fish-wise pivot extra fee check
+                $cuttingCharge = 0;
+                if ($cuttingStyle) {
+                    $pivotStyle = $product->cuttingStyles->firstWhere('id', $cuttingStyle->id);
+                    if ($pivotStyle && $pivotStyle->pivot && $pivotStyle->pivot->additional_charge !== null) {
+                        $cuttingCharge = (float) $pivotStyle->pivot->additional_charge;
+                    } else {
+                        $cuttingCharge = (float) $cuttingStyle->additional_charge;
+                    }
+                }
+
+                $qty = (float) $item['qty_kg'];
                 $itemTotal = ($unitPrice * $qty) + ($cuttingCharge * $qty);
                 $estimatedSubtotal += $itemTotal;
 
@@ -45,6 +55,7 @@ class CartApiController extends Controller
                     'product_name' => $product->name,
                     'tamil_name' => $product->tamil_name,
                     'product_image' => $product->image,
+                    'has_weight_variation' => (bool) $product->has_weight_variation,
                     'price_per_kg' => $unitPrice,
                     'cutting_style_id' => $cuttingStyle ? $cuttingStyle->id : null,
                     'cutting_style_name' => $cuttingStyle ? $cuttingStyle->name : 'Whole Fish (Uncut)',
@@ -73,15 +84,20 @@ class CartApiController extends Controller
             }
         }
 
-        $deliveryFee = (float) Setting::get('delivery_fee', 35);
-        $estimatedTotal = max(0, $estimatedSubtotal - $discountAmount + ($items ? $deliveryFee : 0));
+        // Configurable Delivery Fee & Free Delivery Threshold Rule
+        $baseFee = (float) Setting::get('delivery_base_fee', 35);
+        $freeThreshold = (float) Setting::get('delivery_free_threshold', 499);
+        $deliveryFee = ($estimatedSubtotal >= $freeThreshold || !$items) ? 0 : $baseFee;
+
+        $estimatedTotal = max(0, $estimatedSubtotal - $discountAmount + $deliveryFee);
 
         return response()->json([
             'status' => 'success',
             'items' => $items,
             'item_count' => count($items),
             'estimated_subtotal' => round($estimatedSubtotal, 2),
-            'delivery_fee' => $items ? $deliveryFee : 0,
+            'delivery_fee' => $deliveryFee,
+            'delivery_free_threshold' => $freeThreshold,
             'discount_amount' => round($discountAmount, 2),
             'applied_coupon' => $couponCode,
             'coupon_message' => $couponMessage,

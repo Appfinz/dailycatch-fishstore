@@ -23,6 +23,7 @@ class Product extends Model
         'image',
         'stock_quantity',
         'availability_status',
+        'has_weight_variation',
         'bone_type',
         'best_for',
         'nutrition_info',
@@ -38,6 +39,7 @@ class Product extends Model
         'stock_quantity' => 'float',
         'rating' => 'float',
         'nutrition_info' => 'array',
+        'has_weight_variation' => 'boolean',
         'is_featured' => 'boolean',
         'is_active' => 'boolean',
     ];
@@ -67,7 +69,7 @@ class Product extends Model
 
     public function cuttingStyles()
     {
-        return $this->belongsToMany(CuttingStyle::class, 'product_cutting_style');
+        return $this->belongsToMany(CuttingStyle::class, 'product_cutting_style')->withPivot('additional_charge');
     }
 
     public function recipes()

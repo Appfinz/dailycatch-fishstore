@@ -96,18 +96,18 @@
         </div>
     </div>
 
-    <!-- 1. TOP UTILITY BAR (Desktop & Tablet) -->
-    <div class="bg-brand-navy text-white text-[11px] font-medium py-2 px-4 sm:px-6 lg:px-8 border-b border-white/10">
-        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
-            <div class="flex items-center gap-3 sm:gap-6 overflow-x-auto no-scrollbar whitespace-nowrap">
-                <span><i class="fa-solid fa-truck-fast text-sky-300 mr-1"></i> Same Day Delivery</span>
+    <!-- 1. TOP UTILITY BAR (Mobile & Desktop) -->
+    <div class="bg-brand-navy text-white text-[11px] font-medium py-2 px-3 sm:px-6 lg:px-8 border-b border-white/10">
+        <div class="max-w-7xl mx-auto flex justify-between items-center gap-2">
+            <div class="flex items-center gap-2 sm:gap-4 overflow-x-auto no-scrollbar whitespace-nowrap">
+                <span><i class="fa-solid fa-star text-amber-400 mr-1"></i> <strong class="text-amber-300">100% Freshness Guarantee</strong></span>
                 <span class="text-white/30">|</span>
-                <span><i class="fa-solid fa-box text-sky-300 mr-1"></i> Delivered in Ice Box</span>
-                <span class="hidden sm:inline text-white/30">|</span>
-                <span class="hidden sm:inline"><i class="fa-solid fa-star text-amber-400 mr-1"></i> 100% Fresh Guarantee</span>
+                <span class="hidden sm:inline"><i class="fa-solid fa-truck-fast text-sky-300 mr-1"></i> Ice Box Delivery</span>
             </div>
-            <div class="hidden md:flex items-center gap-4">
-                <span>Support: <a href="tel:+918778199218" class="font-bold hover:underline"><i class="fa-solid fa-phone text-sky-300 mr-1"></i> +91 8778199218</a></span>
+            <div class="flex items-center gap-2 shrink-0">
+                <a href="tel:+918778199218" class="bg-brand-blue/80 hover:bg-brand-blue text-white px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold inline-flex items-center gap-1 transition-all">
+                    <i class="fa-solid fa-phone text-sky-200"></i> +91 8778199218
+                </a>
             </div>
         </div>
     </div>

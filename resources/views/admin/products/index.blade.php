@@ -38,6 +38,7 @@
                     <tr class="bg-slate-950 text-slate-400 text-xs uppercase font-bold border-b border-slate-800">
                         <th class="p-3.5 rounded-l-xl">Fish Product</th>
                         <th class="p-3.5">Category</th>
+                        <th class="p-3.5">Weight Type</th>
                         <th class="p-3.5">Regular Rate (₹/kg)</th>
                         <th class="p-3.5">Offer Rate (₹/kg)</th>
                         <th class="p-3.5">Stock Status</th>
@@ -59,7 +60,14 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="p-3.5 text-slate-400 font-medium">{{ $product->category->name }}</td>
+                            <td class="p-3.5 text-slate-400 font-medium">{{ $product->category ? $product->category->name : 'Sea Fish' }}</td>
+                            <td class="p-3.5">
+                                @if($product->has_weight_variation)
+                                    <span class="bg-amber-500/20 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded border border-amber-500/30">Varies Post-Cut</span>
+                                @else
+                                    <span class="bg-emerald-500/20 text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded border border-emerald-500/30">Exact Weight</span>
+                                @endif
+                            </td>
                             <td class="p-3.5">
                                 <input type="number" step="1" name="prices[{{ $index }}][price_per_kg]" value="{{ $product->price_per_kg }}" 
                                        class="w-24 bg-slate-950 border border-slate-700 text-white font-bold text-xs text-center rounded-lg py-1.5 focus:border-ocean-500">
@@ -95,7 +103,7 @@
 
 <!-- Add Product Modal -->
 <div id="addProductModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl space-y-5 text-white relative">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl space-y-5 text-white relative max-h-[90vh] overflow-y-auto">
         <button onclick="document.getElementById('addProductModal').classList.add('hidden')" class="absolute top-5 right-5 text-slate-400 hover:text-white">
             <i class="fa-solid fa-xmark text-lg"></i>
         </button>
@@ -141,6 +149,33 @@
                     <label class="block text-xs font-bold text-slate-400 mb-1">Stock (Kg)</label>
                     <input type="number" step="1" name="stock_quantity" value="50" required 
                            class="w-full bg-slate-950 border border-slate-700 text-xs font-bold text-white rounded-xl px-3.5 py-2.5">
+                </div>
+            </div>
+
+            <div>
+                <label class="flex items-center gap-2 text-xs font-bold text-slate-300 cursor-pointer">
+                    <input type="checkbox" name="has_weight_variation" value="1" checked class="accent-ocean-500 w-4 h-4">
+                    <span>Weight Varies Post-Cut? (Medium / Large Fish)</span>
+                </label>
+                <p class="text-[10px] text-slate-500 ml-6 mt-0.5">Uncheck for small fish (Nethili/Anchovy) where exact requested weight is supplied.</p>
+            </div>
+
+            <!-- Fish-wise Cutting Style Assignment & Custom Extra Fees -->
+            <div>
+                <label class="block text-xs font-extrabold text-slate-300 uppercase tracking-wider mb-2">Fish-wise Cutting Styles & Extra Fees</label>
+                <div class="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto pr-1 bg-slate-950 p-3 rounded-xl border border-slate-800">
+                    @foreach($cuttingStyles as $cs)
+                        <div class="flex items-center justify-between text-xs py-1 border-b border-slate-900 last:border-none">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" name="cutting_styles[]" value="{{ $cs->id }}" checked class="accent-ocean-500">
+                                <span class="font-bold text-white">{{ $cs->name }}</span>
+                            </label>
+                            <div class="flex items-center gap-1">
+                                <span class="text-[10px] text-slate-400">Extra ₹</span>
+                                <input type="number" step="1" name="cutting_style_fees[{{ $cs->id }}]" value="{{ $cs->additional_charge }}" placeholder="Default {{ $cs->additional_charge }}" class="w-16 bg-slate-900 border border-slate-700 text-white text-[11px] font-bold px-2 py-0.5 rounded text-center">
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
 

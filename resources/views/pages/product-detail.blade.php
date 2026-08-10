@@ -20,18 +20,32 @@
                 @endif
             </div>
 
-            <!-- Transparency & Weight Guarantee Banner -->
-            <div class="bg-amber-50 rounded-2xl p-4 border border-amber-200 flex items-start gap-3">
-                <div class="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-base shrink-0">
-                    <i class="fa-solid fa-scale-balanced"></i>
+            <!-- Transparency & Weight Guarantee Banner (Configurable) -->
+            @if($product->has_weight_variation)
+                <div class="bg-amber-50 rounded-2xl p-4 border border-amber-200 flex items-start gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-base shrink-0">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-extrabold text-xs text-amber-950 uppercase tracking-wider">Fish Weight Transparency Guarantee</h4>
+                        <p class="text-xs text-amber-900 font-medium leading-relaxed mt-0.5">
+                            Medium/Large fish is selected & weighed live in our store. Final bill amount will be calculated using actual whole fish weight.
+                        </p>
+                    </div>
                 </div>
-                <div>
-                    <h4 class="font-extrabold text-xs text-amber-950 uppercase tracking-wider">Fish Weight Transparency Guarantee</h4>
-                    <p class="text-xs text-amber-900 font-medium leading-relaxed mt-0.5">
-                        Fresh fish is selected & weighed live in our store. Final bill amount will be calculated using actual whole fish weight.
-                    </p>
+            @else
+                <div class="bg-emerald-50 rounded-2xl p-4 border border-emerald-200 flex items-start gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-base shrink-0">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-extrabold text-xs text-emerald-950 uppercase tracking-wider">Exact Weight Guaranteed</h4>
+                        <p class="text-xs text-emerald-900 font-medium leading-relaxed mt-0.5">
+                            Small fish supplied in the exact weight requested with no price variation.
+                        </p>
+                    </div>
                 </div>
-            </div>
+            @endif
         </div>
 
         <!-- Right Column: Product Specs & Options -->
@@ -41,7 +55,7 @@
                     {{ $product->category ? $product->category->name : 'Sea Fish' }}
                 </span>
                 <h1 class="text-2xl sm:text-3xl font-black text-brand-navy mt-2 font-display">{{ $product->name }}</h1>
-                <p class="text-xs text-brand-blue font-bold mt-1 text-base">{{ $product->tamil_name }}</p>
+                <p class="text-sm text-brand-blue font-bold mt-1">{{ $product->tamil_name }}</p>
                 
                 <div class="mt-4 flex items-baseline gap-3">
                     @if($product->sale_price_per_kg)
@@ -90,31 +104,49 @@
                 </div>
             </div>
 
-            <!-- 2. Select Custom Cutting Style -->
+            <!-- 2. Select Custom Cutting Style (Larger Images & High Visibility) -->
             <div class="space-y-3 pt-2">
-                <label class="block text-xs font-extrabold text-brand-navy uppercase tracking-wider">
-                    Step 2: Select Cutting Style (Prepped & Cleaned Free)
+                <label class="block text-xs font-extrabold text-brand-navy uppercase tracking-wider flex items-center justify-between">
+                    <span>Step 2: Choose Cutting & Cleaning Style</span>
+                    <span class="text-[10px] text-emerald-600 font-bold lowercase">prepped & cleaned free</span>
                 </label>
 
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div class="grid grid-cols-2 gap-3 sm:gap-4">
                     @foreach($product->cuttingStyles as $index => $cs)
-                        <label onclick="selectCuttingStyle({{ $cs->id }}, {{ $cs->additional_charge }})" 
-                               class="cutting-card relative border-2 rounded-2xl p-3 cursor-pointer transition-all flex flex-col justify-between hover:border-brand-blue bg-slate-50 hover:bg-white shadow-sm {{ $index === 0 ? 'border-brand-blue bg-blue-50/40 ring-2 ring-blue-400/20' : 'border-slate-200' }}"
+                        @php
+                            $charge = ($cs->pivot && $cs->pivot->additional_charge !== null) ? (float)$cs->pivot->additional_charge : (float)$cs->additional_charge;
+                        @endphp
+                        <label onclick="selectCuttingStyle({{ $cs->id }}, {{ $charge }})" 
+                               class="cutting-card relative border-2 rounded-2xl p-3 sm:p-4 cursor-pointer transition-all flex flex-col justify-between hover:border-brand-blue bg-white shadow-sm hover:shadow-md {{ $index === 0 ? 'border-brand-blue bg-blue-50/40 ring-4 ring-brand-blue/20' : 'border-slate-200' }}"
                                data-cs-id="{{ $cs->id }}">
                             <input type="radio" name="cutting_style" value="{{ $cs->id }}" class="hidden" {{ $index === 0 ? 'checked' : '' }}>
                             
                             <div>
-                                <img src="{{ $cs->image ?: 'https://images.unsplash.com/photo-1510130318145-ad4f04e849a7?auto=format&fit=crop&w=300&q=80' }}" alt="{{ $cs->name }}" class="w-full h-16 sm:h-20 object-cover rounded-xl mb-2 border border-slate-200">
-                                <h4 class="font-extrabold text-xs text-brand-navy leading-tight">{{ $cs->name }}</h4>
+                                <!-- Enlarged Image for high visibility -->
+                                <div class="w-full h-32 sm:h-36 rounded-xl overflow-hidden mb-3 border border-slate-200 bg-slate-100 relative">
+                                    <img src="{{ $cs->image ?: 'https://images.unsplash.com/photo-1510130318145-ad4f04e849a7?auto=format&fit=crop&w=600&q=80' }}" 
+                                         alt="{{ $cs->name }}" 
+                                         class="w-full h-full object-cover">
+                                    @if($charge > 0)
+                                        <span class="absolute top-2 right-2 bg-amber-500 text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow">
+                                            +₹{{ number_format($charge, 0) }}/kg
+                                        </span>
+                                    @else
+                                        <span class="absolute top-2 right-2 bg-emerald-600 text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow">
+                                            FREE
+                                        </span>
+                                    @endif
+                                </div>
+                                <h4 class="font-extrabold text-xs sm:text-sm text-brand-navy leading-tight">{{ $cs->name }}</h4>
                                 @if($cs->tamil_name)
-                                    <p class="text-[10px] text-brand-blue font-bold mt-0.5">{{ $cs->tamil_name }}</p>
+                                    <p class="text-[11px] text-brand-blue font-bold mt-0.5">{{ $cs->tamil_name }}</p>
                                 @endif
                             </div>
 
-                            <div class="mt-2 pt-2 border-t border-slate-200 flex items-center justify-between text-[11px]">
-                                <span class="text-slate-500 font-semibold">Extra Fee</span>
-                                <span class="font-extrabold {{ $cs->additional_charge > 0 ? 'text-amber-600' : 'text-emerald-600' }}">
-                                    {{ $cs->additional_charge > 0 ? '+₹' . number_format($cs->additional_charge, 0) : 'FREE' }}
+                            <div class="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                                <span class="text-slate-500 font-medium">Extra Charge</span>
+                                <span class="font-black {{ $charge > 0 ? 'text-amber-600' : 'text-emerald-600' }}">
+                                    {{ $charge > 0 ? '+₹' . number_format($charge, 0) : 'FREE' }}
                                 </span>
                             </div>
                         </label>
@@ -129,7 +161,7 @@
                         <span class="text-xs text-slate-300 block font-semibold">Estimated Amount</span>
                         <div class="flex items-baseline gap-1">
                             <span id="estimatedTotalDisplay" class="text-2xl font-black text-white">₹0.00</span>
-                            <span class="text-[11px] text-slate-300 font-medium">(Est. Bill)</span>
+                            <span class="text-[11px] text-slate-300 font-medium">({{ $product->has_weight_variation ? 'Est. Bill' : 'Fixed Bill' }})</span>
                         </div>
                     </div>
                     
@@ -161,8 +193,12 @@
 <script>
     let unitPrice = {{ $product->sale_price_per_kg ?: $product->price_per_kg }};
     let selectedQty = 0.5;
-    let selectedCsId = {{ $product->cuttingStyles->first() ? $product->cuttingStyles->first()->id : 1 }};
-    let selectedCsCharge = {{ $product->cuttingStyles->first() ? $product->cuttingStyles->first()->additional_charge : 0 }};
+    @php
+        $firstCs = $product->cuttingStyles->first();
+        $firstCharge = $firstCs ? (($firstCs->pivot && $firstCs->pivot->additional_charge !== null) ? (float)$firstCs->pivot->additional_charge : (float)$firstCs->additional_charge) : 0;
+    @endphp
+    let selectedCsId = {{ $firstCs ? $firstCs->id : 1 }};
+    let selectedCsCharge = {{ $firstCharge }};
 
     function selectQty(qty) {
         selectedQty = qty;
@@ -194,9 +230,9 @@
 
         document.querySelectorAll('.cutting-card').forEach(card => {
             if (parseInt(card.dataset.csId) === csId) {
-                card.classList.add('border-brand-blue', 'bg-blue-50/40', 'ring-2', 'ring-blue-400/20');
+                card.classList.add('border-brand-blue', 'bg-blue-50/40', 'ring-4', 'ring-brand-blue/20');
             } else {
-                card.classList.remove('border-brand-blue', 'bg-blue-50/40', 'ring-2', 'ring-blue-400/20');
+                card.classList.remove('border-brand-blue', 'bg-blue-50/40', 'ring-4', 'ring-brand-blue/20');
             }
         });
 

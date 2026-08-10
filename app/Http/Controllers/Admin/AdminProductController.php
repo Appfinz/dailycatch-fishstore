@@ -53,6 +53,7 @@ class AdminProductController extends Controller
             'english_alias' => 'nullable|string',
             'short_desc' => 'nullable|string',
             'cutting_styles' => 'nullable|array',
+            'cutting_style_fees' => 'nullable|array',
         ]);
 
         $product = Product::create([
@@ -68,17 +69,61 @@ class AdminProductController extends Controller
             'image' => $request->image ?: 'https://images.unsplash.com/photo-1534483509719-3feaee7c30da?auto=format&fit=crop&w=600&q=80',
             'stock_quantity' => $request->stock_quantity,
             'availability_status' => 'in_stock',
+            'has_weight_variation' => $request->has('has_weight_variation'),
             'is_featured' => $request->has('is_featured'),
             'is_active' => true,
         ]);
 
+        $syncData = [];
         if ($request->has('cutting_styles')) {
-            $product->cuttingStyles()->sync($request->cutting_styles);
-        } else {
-            $product->cuttingStyles()->sync(CuttingStyle::pluck('id'));
+            foreach ($request->cutting_styles as $csId) {
+                $customFee = isset($request->cutting_style_fees[$csId]) && $request->cutting_style_fees[$csId] !== ''
+                    ? (float) $request->cutting_style_fees[$csId]
+                    : null;
+                $syncData[$csId] = ['additional_charge' => $customFee];
+            }
         }
+        $product->cuttingStyles()->sync($syncData);
 
         return redirect()->back()->with('success', 'New fish product added successfully!');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $product = Product::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'price_per_kg' => 'required|numeric|min:0',
+            'sale_price_per_kg' => 'nullable|numeric|min:0',
+            'cutting_styles' => 'nullable|array',
+            'cutting_style_fees' => 'nullable|array',
+        ]);
+
+        $product->update([
+            'name' => $request->name,
+            'category_id' => $request->category_id,
+            'tamil_name' => $request->tamil_name,
+            'english_alias' => $request->english_alias,
+            'price_per_kg' => $request->price_per_kg,
+            'sale_price_per_kg' => $request->sale_price_per_kg,
+            'has_weight_variation' => $request->has('has_weight_variation'),
+            'availability_status' => $request->availability_status ?: 'in_stock',
+        ]);
+
+        $syncData = [];
+        if ($request->has('cutting_styles')) {
+            foreach ($request->cutting_styles as $csId) {
+                $customFee = isset($request->cutting_style_fees[$csId]) && $request->cutting_style_fees[$csId] !== ''
+                    ? (float) $request->cutting_style_fees[$csId]
+                    : null;
+                $syncData[$csId] = ['additional_charge' => $customFee];
+            }
+        }
+        $product->cuttingStyles()->sync($syncData);
+
+        return redirect()->back()->with('success', 'Product updated successfully!');
     }
 
     public function destroy($id)

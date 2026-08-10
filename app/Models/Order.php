@@ -21,12 +21,15 @@ class Order extends Model
         'latitude',
         'longitude',
         'delivery_slot',
+        'is_preorder',
+        'delivery_date',
         'payment_method',
         'payment_status',
         'status',
         'estimated_subtotal',
         'delivery_charge',
         'discount_amount',
+        'preorder_discount',
         'estimated_total',
         'final_subtotal',
         'final_total',
@@ -36,9 +39,12 @@ class Order extends Model
     ];
 
     protected $casts = [
+        'is_preorder' => 'boolean',
+        'delivery_date' => 'date',
         'estimated_subtotal' => 'float',
         'delivery_charge' => 'float',
         'discount_amount' => 'float',
+        'preorder_discount' => 'float',
         'estimated_total' => 'float',
         'final_subtotal' => 'float',
         'final_total' => 'float',

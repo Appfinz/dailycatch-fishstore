@@ -144,10 +144,10 @@
         <!-- Right: Customer Info & Summary Invoice -->
         <div class="lg:col-span-4 space-y-6">
             
-            <!-- Customer Details Card -->
+            <!-- Customer Details Card with Google Maps Navigation Button -->
             <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
                 <h3 class="font-extrabold text-base text-white border-b border-slate-800 pb-3 flex items-center gap-2">
-                    <i class="fa-solid fa-user-tag text-aqua-400"></i> Customer Details
+                    <i class="fa-solid fa-user-tag text-aqua-400"></i> Customer & Delivery Location
                 </h3>
 
                 <div class="space-y-3 text-xs">
@@ -160,8 +160,13 @@
                         <span class="font-bold text-aqua-400 text-sm">+91 {{ $order->customer_phone }}</span>
                     </div>
                     <div>
-                        <span class="text-slate-500 block">Delivery Type</span>
-                        <span class="font-bold text-white uppercase bg-slate-800 px-2.5 py-1 rounded inline-block mt-0.5">{{ $order->delivery_type }}</span>
+                        <span class="text-slate-500 block">Delivery Type & Date</span>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span class="font-bold text-white uppercase bg-slate-800 px-2.5 py-1 rounded inline-block">{{ $order->delivery_type }}</span>
+                            @if($order->is_preorder)
+                                <span class="font-extrabold text-emerald-400 bg-emerald-950 border border-emerald-800 px-2 py-0.5 rounded text-[10px]">PRE-ORDER (Tomorrow)</span>
+                            @endif
+                        </div>
                     </div>
                     @if($order->delivery_type === 'delivery')
                         <div>
@@ -172,6 +177,19 @@
                             <div>
                                 <span class="text-slate-500 block">Landmark</span>
                                 <p class="text-slate-300 font-medium">{{ $order->landmark }}</p>
+                            </div>
+                        @endif
+
+                        <!-- Delivery Partner Google Maps Turn-by-Turn Button -->
+                        @if($order->latitude && $order->longitude)
+                            <div class="pt-2 border-t border-slate-800">
+                                <a href="https://www.google.com/maps/dir/?api=1&destination={{ $order->latitude }},{{ $order->longitude }}" 
+                                   target="_blank" 
+                                   class="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs py-3 rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all">
+                                    <i class="fa-solid fa-diamond-turn-right text-sm"></i>
+                                    <span>Navigate to Customer Location (Google Maps)</span>
+                                </a>
+                                <span class="text-[10px] text-slate-400 block text-center mt-1">GPS Coordinates: {{ $order->latitude }}, {{ $order->longitude }}</span>
                             </div>
                         @endif
                     @endif
@@ -191,6 +209,12 @@
                         <span>Requested Est Subtotal</span>
                         <span class="font-bold text-slate-200">₹{{ number_format($order->estimated_subtotal, 2) }}</span>
                     </div>
+                    @if($order->preorder_discount > 0)
+                        <div class="flex justify-between text-emerald-400 font-bold">
+                            <span>Pre-Order Discount</span>
+                            <span>-₹{{ number_format($order->preorder_discount, 2) }}</span>
+                        </div>
+                    @endif
                     <div class="flex justify-between text-slate-400">
                         <span>Estimated Total</span>
                         <span class="font-bold text-amber-400">₹{{ number_format($order->estimated_total, 2) }}</span>

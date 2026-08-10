@@ -6,13 +6,13 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-            <h1 class="text-2xl sm:text-3xl font-black text-brand-navy tracking-tight font-display">Checkout & Delivery</h1>
-            <p class="text-xs sm:text-sm text-slate-500 mt-1 font-medium">Select your saved address, check 3KM express delivery zone, and pay on delivery.</p>
+            <h1 class="text-2xl sm:text-3xl font-black text-brand-navy tracking-tight font-display">Checkout & Fast Delivery</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1 font-medium">Select your delivery location on the map, choose delivery slot or pre-order to save ₹20, and pay on delivery.</p>
         </div>
 
         <button type="button" onclick="locateUserGPS(true)" class="btn-brand-blue px-4 py-2.5 rounded-xl text-xs font-extrabold flex items-center gap-2 shadow self-start md:self-auto">
             <i class="fa-solid fa-location-crosshairs text-sm"></i>
-            <span>Detect My Current GPS Location</span>
+            <span>Detect My Location</span>
         </button>
     </div>
 
@@ -41,12 +41,13 @@
             <!-- Left Column: Delivery Details -->
             <div class="lg:col-span-8 space-y-6">
                 
-                <!-- 1. Delivery Method Selection -->
+                <!-- 1. Delivery Method Selection & Pre-Order Toggle -->
                 <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
                     <h3 class="font-extrabold text-base text-brand-navy flex items-center gap-2 font-display">
-                        <i class="fa-solid fa-truck-ramp-box text-brand-blue"></i> Step 1: Select Delivery Method
+                        <i class="fa-solid fa-truck-ramp-box text-brand-blue"></i> Step 1: Select Delivery Type & Date
                     </h3>
 
+                    <!-- Delivery Type (Home Delivery vs Pickup) -->
                     <div class="grid grid-cols-2 gap-4">
                         <label onclick="toggleDeliveryMode('delivery')" id="deliveryTabBtn" class="border-2 border-brand-blue bg-blue-50/40 rounded-2xl p-4 cursor-pointer text-center font-bold text-sm text-brand-navy transition-all flex flex-col items-center gap-2">
                             <input type="radio" name="delivery_type" value="delivery" checked class="hidden">
@@ -62,13 +63,47 @@
                             <span class="text-[10px] text-slate-500 font-normal">East Tambaram Shop</span>
                         </label>
                     </div>
+
+                    <!-- Pre-Order for Tomorrow vs Today Express Delivery -->
+                    <div class="pt-2 border-t border-slate-100">
+                        <label class="block text-xs font-extrabold text-brand-navy uppercase tracking-wider mb-2">Delivery Timing Preference</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <label onclick="setPreorderMode(false)" id="tabToday" class="border-2 border-brand-blue bg-blue-50/40 rounded-2xl p-3.5 cursor-pointer flex items-center gap-3 transition-all">
+                                <input type="radio" name="is_preorder_option" value="0" checked class="accent-brand-blue">
+                                <div>
+                                    <h4 class="font-extrabold text-xs text-brand-navy flex items-center gap-1.5">
+                                        <i class="fa-solid fa-bolt text-amber-500"></i> Today's Express Delivery
+                                    </h4>
+                                    <p class="text-[11px] text-slate-500 font-medium">Delivered today in available slot</p>
+                                </div>
+                            </label>
+
+                            <label onclick="setPreorderMode(true)" id="tabTomorrow" class="border-2 border-emerald-500 bg-emerald-50/60 rounded-2xl p-3.5 cursor-pointer flex items-center gap-3 transition-all relative overflow-hidden">
+                                <input type="radio" name="is_preorder_option" value="1" class="accent-emerald-600">
+                                <div>
+                                    <h4 class="font-extrabold text-xs text-emerald-950 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-calendar-check text-emerald-600"></i> Pre-Order for Tomorrow
+                                    </h4>
+                                    <p class="text-[11px] text-emerald-800 font-bold">Save ₹20 Pre-Order Discount!</p>
+                                </div>
+                                <span class="absolute -top-1 -right-1 bg-emerald-600 text-white text-[9px] font-black uppercase px-2 py-0.5 rounded-bl-lg">
+                                    -₹20 OFF
+                                </span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- 2. Customer Contact & Saved Addresses -->
+                <!-- 2. Customer Contact & Simplified Map Location Picker -->
                 <div id="addressSection" class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-5">
-                    <h3 class="font-extrabold text-base text-brand-navy flex items-center gap-2 font-display">
-                        <i class="fa-solid fa-map-location-dot text-brand-blue"></i> Step 2: Customer Contact & Delivery Address
-                    </h3>
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-extrabold text-base text-brand-navy flex items-center gap-2 font-display">
+                            <i class="fa-solid fa-map-location-dot text-brand-blue"></i> Step 2: Contact & Map Delivery Location
+                        </h3>
+                        <button type="button" onclick="focusNewAddressSection()" class="text-xs font-extrabold text-brand-blue hover:underline flex items-center gap-1">
+                            <i class="fa-solid fa-plus-circle"></i> + Add New Address
+                        </button>
+                    </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
@@ -85,56 +120,29 @@
 
                     <!-- SAVED ADDRESSES SECTION -->
                     <div id="savedAddressesContainer" class="space-y-3 pt-2">
-                        <label class="block text-xs font-extrabold text-brand-navy uppercase tracking-wider">Select Saved Address</label>
+                        <label class="block text-xs font-extrabold text-brand-navy uppercase tracking-wider">Select Saved Delivery Location</label>
                         <div id="savedAddressesList" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <!-- Loaded dynamically via JS -->
                         </div>
                     </div>
 
                     <div id="homeDeliveryAddressFields" class="space-y-4 border-t border-slate-100 pt-4">
-                        <div class="flex items-center justify-between">
-                            <h4 class="font-extrabold text-xs text-brand-navy">Or Enter New Delivery Address</h4>
-                            <span class="text-[10px] text-slate-500 font-medium">Type address & click verify</span>
-                        </div>
-                        
-                        <div class="relative">
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Street Address / Area / City <span class="text-rose-500">*</span></label>
-                            <div class="flex gap-2">
-                                <textarea id="custAddress" rows="2" placeholder="Enter street, area, city (e.g. Connaught Place Delhi or Tambaram Chennai)" 
-                                          class="w-full bg-slate-50 border border-slate-300 text-xs font-medium text-brand-navy rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-brand-blue">22g, Thiruvalluvar Street, East Tambaram, Chennai</textarea>
-                                <button type="button" onclick="geocodeAddressText()" class="px-4 bg-brand-navy hover:bg-slate-900 text-white rounded-xl text-xs font-bold shrink-0 self-stretch">
-                                    Verify Address
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Landmark (Optional)</label>
-                                <input type="text" id="custLandmark" placeholder="Near Railway Station" 
-                                       class="w-full bg-slate-50 border border-slate-300 text-xs font-medium text-brand-navy rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-brand-blue">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Address Label</label>
-                                <select id="custAddressLabel" class="w-full bg-slate-50 border border-slate-300 text-xs font-bold text-brand-navy rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-brand-blue">
-                                    <option value="Home">Home</option>
-                                    <option value="Work">Work</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- 3KM Location Distance Indicator -->
-                        <div class="space-y-2 pt-2">
+                        <!-- 3KM Interactive Location Picker Map -->
+                        <div class="space-y-2">
                             <div class="flex items-center justify-between">
                                 <label class="block text-xs font-extrabold text-brand-navy flex items-center gap-1.5 uppercase tracking-wider">
-                                    <i class="fa-solid fa-location-dot text-brand-blue"></i> Interactive Map Pin (Drag to fine-tune)
+                                    <i class="fa-solid fa-location-dot text-brand-blue"></i> Pinpoint Exact Door Location on Map
                                 </label>
-                                <span class="text-[10px] text-slate-500">Center point: East Tambaram</span>
+                                <button type="button" onclick="locateUserGPS(true)" class="text-[11px] text-brand-blue font-bold hover:underline flex items-center gap-1">
+                                    <i class="fa-solid fa-crosshairs"></i> Detect My Location
+                                </button>
                             </div>
 
-                            <div id="map" class="w-full h-56 rounded-2xl border-2 border-slate-300 shadow-inner"></div>
+                            <p class="text-[11px] text-slate-500 font-medium">
+                                Move/drag the map pin directly over your house or delivery door for accurate navigation.
+                            </p>
+
+                            <div id="map" class="w-full h-64 rounded-2xl border-2 border-slate-300 shadow-inner z-10"></div>
                             
                             <input type="hidden" id="custLat" value="12.9249">
                             <input type="hidden" id="custLng" value="80.1278">
@@ -146,27 +154,32 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Address Details Input -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs font-bold text-slate-700 mb-1">House / Flat No / Street Address <span class="text-rose-500">*</span></label>
+                                <textarea id="custAddress" rows="2" placeholder="e.g. Flat 3B, Door No 22g, Thiruvalluvar Street, East Tambaram" 
+                                          class="w-full bg-slate-50 border border-slate-300 text-xs font-medium text-brand-navy rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-brand-blue">22g, Thiruvalluvar Street, East Tambaram, Chennai</textarea>
+                            </div>
+
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Landmark / Special Instructions (Optional)</label>
+                                <input type="text" id="custLandmark" placeholder="Near Railway Station / Opposite Temple" 
+                                       class="w-full bg-slate-50 border border-slate-300 text-xs font-medium text-brand-navy rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-brand-blue">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- 3. Delivery Slots -->
+                <!-- 3. Dynamic Time-Aware Delivery Slots -->
                 <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
                     <h3 class="font-extrabold text-base text-brand-navy flex items-center gap-2 font-display">
-                        <i class="fa-solid fa-clock text-brand-blue"></i> Step 3: Select Preferred Delivery Slot
+                        <i class="fa-solid fa-clock text-brand-blue"></i> Step 3: Select Available Delivery Slot
                     </h3>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        @foreach($deliverySlots as $index => $slot)
-                            <label class="border-2 rounded-2xl p-3.5 cursor-pointer transition-all flex items-center justify-between border-slate-200 bg-slate-50 hover:bg-white">
-                                <div class="flex items-center gap-3">
-                                    <input type="radio" name="delivery_slot" value="{{ $slot->name }} ({{ $slot->time_range }})" {{ $index === 0 ? 'checked' : '' }} class="accent-brand-blue">
-                                    <div>
-                                        <h4 class="font-bold text-xs text-brand-navy">{{ $slot->name }}</h4>
-                                        <p class="text-[11px] text-slate-500 font-semibold">{{ $slot->time_range }}</p>
-                                    </div>
-                                </div>
-                            </label>
-                        @endforeach
+                    <div id="slotsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <!-- Loaded dynamically via JS based on current time & preorder selection -->
                     </div>
                 </div>
 
@@ -210,7 +223,11 @@
                         </div>
                         <div class="flex justify-between">
                             <span>Delivery Fee</span>
-                            <span id="chkDelivery" class="font-bold text-emerald-600">₹35.00</span>
+                            <span id="chkDelivery" class="font-bold text-emerald-600">₹0.00</span>
+                        </div>
+                        <div id="preorderDiscountRow" class="flex justify-between text-emerald-600 font-bold hidden">
+                            <span>Pre-Order Discount</span>
+                            <span id="chkPreorderDiscount">-₹20.00</span>
                         </div>
                         <div class="flex justify-between text-base font-black text-brand-navy pt-3 border-t border-slate-200">
                             <span>Estimated Total</span>
@@ -239,6 +256,15 @@
     let shopLng = {{ $branch->longitude ?: 80.1278 }};
     let cartDataCache = null;
     let isWithin3KmRadius = true;
+    let isPreorder = false;
+    const preorderDiscountVal = 20;
+
+    const allSlots = [
+        { name: "Morning Slot", time_range: "07:00 AM - 10:00 AM", endHour: 10 },
+        { name: "Mid-day Slot", time_range: "10:00 AM - 01:00 PM", endHour: 13 },
+        { name: "Afternoon Slot", time_range: "01:00 PM - 04:00 PM", endHour: 16 },
+        { name: "Evening Slot", time_range: "04:00 PM - 07:00 PM", endHour: 19 }
+    ];
 
     function initMap() {
         map = L.map('map').setView([shopLat, shopLng], 14);
@@ -254,11 +280,13 @@
         marker.on('dragend', function (e) {
             let latlng = marker.getLatLng();
             updateLocationCoordinates(latlng.lat, latlng.lng);
+            reverseGeocode(latlng.lat, latlng.lng);
         });
 
         map.on('click', function(e) {
             marker.setLatLng(e.latlng);
             updateLocationCoordinates(e.latlng.lat, e.latlng.lng);
+            reverseGeocode(e.latlng.lat, e.latlng.lng);
         });
 
         updateLocationCoordinates(shopLat, shopLng);
@@ -314,36 +342,84 @@
             navigator.geolocation.getCurrentPosition(pos => {
                 let lat = pos.coords.latitude;
                 let lng = pos.coords.longitude;
-                map.setView([lat, lng], 14);
+                map.setView([lat, lng], 15);
                 marker.setLatLng([lat, lng]);
                 updateLocationCoordinates(lat, lng);
+                reverseGeocode(lat, lng);
             }, (err) => {
-                if (userClicked) alert("GPS detection denied or unavailable. Please type your address or drag the map pin.");
+                if (userClicked) alert("GPS detection denied or unavailable. Drag the map pin to select location.");
             });
         } else {
             if (userClicked) alert("Geolocation is not supported by your browser.");
         }
     }
 
-    async function geocodeAddressText() {
-        const addressText = document.getElementById('custAddress').value;
-        if (!addressText.trim()) return;
-
+    async function reverseGeocode(lat, lng) {
         try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressText)}`);
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
             const data = await res.json();
-            if (data && data.length > 0) {
-                let lat = parseFloat(data[0].lat);
-                let lng = parseFloat(data[0].lon);
-                map.setView([lat, lng], 14);
-                marker.setLatLng([lat, lng]);
-                updateLocationCoordinates(lat, lng);
-            } else {
-                alert("Address not found on map. Please drag the pin on map to set your exact location.");
+            if (data && data.display_name) {
+                document.getElementById('custAddress').value = data.display_name;
             }
-        } catch (e) {
-            console.error(e);
+        } catch (e) { console.error(e); }
+    }
+
+    function focusNewAddressSection() {
+        document.getElementById('custAddress').focus();
+        document.getElementById('homeDeliveryAddressFields').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function setPreorderMode(preorder) {
+        isPreorder = preorder;
+        const tabToday = document.getElementById('tabToday');
+        const tabTomorrow = document.getElementById('tabTomorrow');
+
+        if (preorder) {
+            tabTomorrow.className = "border-2 border-emerald-600 bg-emerald-100/80 rounded-2xl p-3.5 cursor-pointer flex items-center gap-3 transition-all relative overflow-hidden ring-2 ring-emerald-500/20";
+            tabToday.className = "border-2 border-slate-200 bg-slate-50 rounded-2xl p-3.5 cursor-pointer flex items-center gap-3 transition-all opacity-75";
+        } else {
+            tabToday.className = "border-2 border-brand-blue bg-blue-50/40 rounded-2xl p-3.5 cursor-pointer flex items-center gap-3 transition-all";
+            tabTomorrow.className = "border-2 border-emerald-500 bg-emerald-50/60 rounded-2xl p-3.5 cursor-pointer flex items-center gap-3 transition-all relative overflow-hidden";
         }
+
+        renderDeliverySlots();
+        updateSummaryTotal();
+    }
+
+    function renderDeliverySlots() {
+        const container = document.getElementById('slotsContainer');
+        const currentHour = new Date().getHours();
+        
+        let available = [];
+        if (isPreorder) {
+            // All slots for tomorrow available
+            available = allSlots;
+        } else {
+            // Filter today's slots based on current time
+            available = allSlots.filter(s => s.endHour > currentHour);
+            if (available.length === 0) {
+                // If today's slots are over, suggest tomorrow
+                container.innerHTML = `
+                    <div class="col-span-2 p-4 bg-amber-50 rounded-2xl border border-amber-200 text-amber-900 text-xs">
+                        <p class="font-extrabold"><i class="fa-solid fa-moon"></i> Today's delivery slots are closed for the day.</p>
+                        <p class="mt-1">Please select <strong>Pre-Order for Tomorrow</strong> above to save ₹20 on your order!</p>
+                    </div>
+                `;
+                return;
+            }
+        }
+
+        container.innerHTML = available.map((slot, idx) => `
+            <label class="border-2 rounded-2xl p-3.5 cursor-pointer transition-all flex items-center justify-between border-slate-200 bg-slate-50 hover:bg-white">
+                <div class="flex items-center gap-3">
+                    <input type="radio" name="delivery_slot" value="${slot.name} (${slot.time_range})" ${idx === 0 ? 'checked' : ''} class="accent-brand-blue">
+                    <div>
+                        <h4 class="font-bold text-xs text-brand-navy">${slot.name} ${isPreorder ? '(Tomorrow)' : '(Today)'}</h4>
+                        <p class="text-[11px] text-slate-500 font-semibold">${slot.time_range}</p>
+                    </div>
+                </div>
+            </label>
+        `).join('');
     }
 
     function toggleDeliveryMode(mode) {
@@ -375,7 +451,7 @@
                 container.innerHTML = data.addresses.map((addr, idx) => `
                     <label onclick="selectSavedAddress(${addr.latitude}, ${addr.longitude}, '${addr.street_address}')" class="border-2 rounded-2xl p-3 cursor-pointer transition-all flex flex-col justify-between ${idx === 0 ? 'border-brand-blue bg-blue-50/40' : 'border-slate-200 bg-slate-50'}">
                         <div class="flex items-center justify-between mb-1">
-                            <span class="font-extrabold text-xs text-brand-navy"><i class="fa-solid fa-tag text-brand-blue"></i> ${addr.label}</span>
+                            <span class="font-extrabold text-xs text-brand-navy"><i class="fa-solid fa-location-dot text-brand-blue"></i> Delivery Spot</span>
                             <span class="text-[10px] text-emerald-600 font-extrabold">${addr.distance_km} KM</span>
                         </div>
                         <p class="text-[11px] text-slate-600 line-clamp-2">${addr.street_address}</p>
@@ -391,7 +467,7 @@
 
     function selectSavedAddress(lat, lng, addressText) {
         document.getElementById('custAddress').value = addressText;
-        map.setView([lat, lng], 14);
+        map.setView([lat, lng], 15);
         marker.setLatLng([lat, lng]);
         updateLocationCoordinates(lat, lng);
     }
@@ -402,10 +478,6 @@
             cartDataCache = await res.json();
 
             if (cartDataCache.status === 'success') {
-                document.getElementById('chkSubtotal').innerText = '₹' + cartDataCache.estimated_subtotal.toFixed(2);
-                document.getElementById('chkDelivery').innerText = '₹' + cartDataCache.delivery_fee.toFixed(2);
-                document.getElementById('chkTotal').innerText = '₹' + cartDataCache.estimated_total.toFixed(2);
-
                 const container = document.getElementById('checkoutItemsReview');
                 container.innerHTML = cartDataCache.items.map(item => `
                     <div class="flex items-center justify-between text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200">
@@ -416,8 +488,32 @@
                         <span class="font-black text-brand-navy">₹${item.estimated_item_total.toFixed(2)}</span>
                     </div>
                 `).join('');
+
+                updateSummaryTotal();
             }
         } catch (e) { console.error(e); }
+    }
+
+    function updateSummaryTotal() {
+        if (!cartDataCache) return;
+
+        let subtotal = cartDataCache.estimated_subtotal || 0;
+        let delFee = cartDataCache.delivery_fee || 0;
+        let discount = isPreorder ? preorderDiscountVal : 0;
+
+        let finalTotal = Math.max(0, subtotal + delFee - discount);
+
+        document.getElementById('chkSubtotal').innerText = '₹' + subtotal.toFixed(2);
+        document.getElementById('chkDelivery').innerText = delFee > 0 ? '₹' + delFee.toFixed(2) : 'FREE';
+
+        const preRow = document.getElementById('preorderDiscountRow');
+        if (isPreorder) {
+            preRow.classList.remove('hidden');
+        } else {
+            preRow.classList.add('hidden');
+        }
+
+        document.getElementById('chkTotal').innerText = '₹' + finalTotal.toFixed(2);
     }
 
     async function handleCheckoutSubmit(e) {
@@ -435,7 +531,9 @@
         const landmark = document.getElementById('custLandmark').value;
         const lat = document.getElementById('custLat').value;
         const lng = document.getElementById('custLng').value;
-        const slot = document.querySelector('input[name="delivery_slot"]:checked').value;
+        
+        const slotRadio = document.querySelector('input[name="delivery_slot"]:checked');
+        const slot = slotRadio ? slotRadio.value : 'Morning Slot (07:00 AM - 10:00 AM)';
 
         if (!cartDataCache || !cartDataCache.items || cartDataCache.items.length === 0) {
             alert("Your basket is empty. Please add items to order.");
@@ -464,6 +562,7 @@
                     latitude: lat,
                     longitude: lng,
                     delivery_slot: slot,
+                    is_preorder: isPreorder,
                     payment_method: 'COD',
                     cart_items: items
                 })
@@ -488,6 +587,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         initMap();
+        renderDeliverySlots();
         loadCheckoutReview();
         loadSavedAddresses();
     });

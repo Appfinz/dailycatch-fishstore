@@ -26,6 +26,8 @@ class OrderApiController extends Controller
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'delivery_slot' => 'nullable|string',
+            'is_preorder' => 'nullable|boolean',
+            'delivery_date' => 'nullable|date',
             'payment_method' => 'required|string',
             'cart_items' => 'required|array|min:1',
             'cart_items.*.product_id' => 'required|exists:products,id',
@@ -50,7 +52,7 @@ class OrderApiController extends Controller
         // Strict 3KM Location Radius Validation
         if ($request->delivery_type === 'delivery') {
             $distance = $this->calculateDistance($lat, $lng);
-            $maxRadius = (float) Setting::get('default_delivery_radius_km', 3.0);
+            $maxRadius = (float) Setting::get('delivery_max_distance_km', 3.0);
 
             if ($distance > $maxRadius) {
                 return response()->json([
@@ -81,11 +83,22 @@ class OrderApiController extends Controller
         $orderItemsData = [];
 
         foreach ($request->cart_items as $item) {
-            $product = Product::find($item['product_id']);
+            $product = Product::with('cuttingStyles')->find($item['product_id']);
             $cuttingStyle = CuttingStyle::find($item['cutting_style_id']);
 
             $unitPrice = $product->sale_price_per_kg ?: $product->price_per_kg;
-            $cuttingCharge = $cuttingStyle ? $cuttingStyle->additional_charge : 0;
+
+            // Fish-wise pivot extra fee check
+            $cuttingCharge = 0;
+            if ($cuttingStyle) {
+                $pivotStyle = $product->cuttingStyles->firstWhere('id', $cuttingStyle->id);
+                if ($pivotStyle && $pivotStyle->pivot && $pivotStyle->pivot->additional_charge !== null) {
+                    $cuttingCharge = (float) $pivotStyle->pivot->additional_charge;
+                } else {
+                    $cuttingCharge = (float) $cuttingStyle->additional_charge;
+                }
+            }
+
             $qty = (float) $item['qty_kg'];
             $itemTotal = ($unitPrice * $qty) + ($cuttingCharge * $qty);
 
@@ -103,9 +116,12 @@ class OrderApiController extends Controller
             ];
         }
 
-        $deliveryCharge = ($request->delivery_type === 'delivery') ? (float) Setting::get('delivery_fee', 35) : 0;
-        $discountAmount = 0;
+        // Configurable Delivery Fee & Threshold Rule
+        $baseFee = (float) Setting::get('delivery_base_fee', 35);
+        $freeThreshold = (float) Setting::get('delivery_free_threshold', 499);
+        $deliveryCharge = ($request->delivery_type === 'delivery' && $estimatedSubtotal < $freeThreshold) ? $baseFee : 0;
 
+        $discountAmount = 0;
         $couponCode = session()->get('applied_coupon');
         if ($couponCode) {
             $coupon = Coupon::where('code', $couponCode)->where('is_active', true)->first();
@@ -116,7 +132,12 @@ class OrderApiController extends Controller
             }
         }
 
-        $estimatedTotal = max(0, $estimatedSubtotal + $deliveryCharge - $discountAmount);
+        // Pre-order Discount (₹20 or configured setting)
+        $isPreorder = (bool) $request->is_preorder;
+        $preorderDiscount = $isPreorder ? (float) Setting::get('preorder_discount_amount', 20) : 0.00;
+        $deliveryDate = $isPreorder && $request->delivery_date ? $request->delivery_date : date('Y-m-d');
+
+        $estimatedTotal = max(0, $estimatedSubtotal + $deliveryCharge - $discountAmount - $preorderDiscount);
 
         $order = Order::create([
             'order_number' => $orderNumber,
@@ -130,12 +151,15 @@ class OrderApiController extends Controller
             'latitude' => $lat,
             'longitude' => $lng,
             'delivery_slot' => $request->delivery_slot ?: 'Morning Slot (07:00 AM - 10:00 AM)',
-            'payment_method' => 'cod', // Locked to Cash on Delivery / Pay on Delivery
+            'is_preorder' => $isPreorder,
+            'delivery_date' => $deliveryDate,
+            'payment_method' => 'cod', // Cash on Delivery / Pay on Delivery
             'payment_status' => 'pending',
             'status' => 'awaiting_fulfilment',
             'estimated_subtotal' => round($estimatedSubtotal, 2),
             'delivery_charge' => round($deliveryCharge, 2),
             'discount_amount' => round($discountAmount, 2),
+            'preorder_discount' => round($preorderDiscount, 2),
             'estimated_total' => round($estimatedTotal, 2),
             'cancellation_expires_at' => $cancellationExpiresAt,
         ]);
