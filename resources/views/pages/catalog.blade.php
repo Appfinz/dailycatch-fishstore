@@ -10,7 +10,7 @@
         <div>
             <span class="text-xs font-bold text-brand-blue uppercase tracking-wider">Fresh Fish Market</span>
             <h1 class="text-2xl sm:text-3xl font-black text-brand-navy font-display">Full Seafood Catalog</h1>
-            <p class="text-xs text-slate-500 mt-1 font-medium">Showing {{ $products->total() }} fresh sea catches, prawns & crabs</p>
+            <p class="text-xs text-slate-500 mt-1 font-medium">Showing {{ $products->count() }} fresh sea catches, prawns & crabs</p>
         </div>
 
         <form method="GET" action="{{ route('catalog') }}" class="flex items-center gap-2 w-full md:w-auto">
