@@ -17,8 +17,8 @@
                 <span class="text-brand-blue">DELIVERED TODAY</span>
             </h1>
 
-            <p class="text-slate-800 text-sm sm:text-base font-extrabold">
-                Order before 3PM and get it today
+            <p class="text-slate-800 text-sm sm:text-base font-extrabold flex items-center justify-center lg:justify-start gap-2">
+                <span>100% Fresh Harbor Catch</span> • <span>Same-Day Slot Delivery</span>
             </p>
 
             <!-- 3 Feature Badges in a horizontal row -->
@@ -33,7 +33,7 @@
                 </div>
                 <div class="flex items-center gap-2 bg-white/80 backdrop-blur px-3 py-1.5 rounded-full border border-slate-200 shadow-sm">
                     <i class="fa-solid fa-box text-brand-blue"></i>
-                    <span>Delivered in Ice Box</span>
+                    <span>Fresh Insulated Packing</span>
                 </div>
             </div>
 
@@ -81,8 +81,8 @@
                     <i class="fa-solid fa-clock"></i>
                 </div>
                 <div>
-                    <span class="font-black text-sm text-brand-navy block leading-none">30 Min</span>
-                    <span class="text-[10px] font-semibold text-slate-500">Express Delivery</span>
+                    <span class="font-black text-sm text-brand-navy block leading-none">Same Day</span>
+                    <span class="text-[10px] font-semibold text-slate-500">Slot Delivery</span>
                 </div>
             </div>
 
@@ -110,7 +110,7 @@
                 </div>
                 <div>
                     <h4 class="font-black text-sm text-brand-navy font-display uppercase tracking-tight">Check Express Delivery Serviceability</h4>
-                    <p class="text-xs text-slate-500 font-semibold mt-0.5">3KM Radius Store: 22g, Thiruvalluvar Street, East Tambaram, Chennai</p>
+                    <p class="text-xs text-slate-500 font-semibold mt-0.5">Store: 22G, Thiruvalluvar Street, East Tambaram, Chennai – 600059</p>
                 </div>
             </div>
 
@@ -271,16 +271,16 @@
                 <div class="w-12 h-12 rounded-full bg-white text-brand-blue flex items-center justify-center font-bold text-lg mx-auto shadow-sm">
                     <i class="fa-solid fa-box-open"></i>
                 </div>
-                <h4 class="font-extrabold text-xs text-brand-navy">Delivered in Ice Box</h4>
-                <p class="text-[11px] text-slate-500 leading-relaxed font-medium">Your order is packed with care and delivered in an ice box.</p>
+                <h4 class="font-extrabold text-xs text-brand-navy">Hygienic Fresh Packing</h4>
+                <p class="text-[11px] text-slate-500 leading-relaxed font-medium">Your fresh catch is packed hygienically and delivered directly to your doorstep.</p>
             </div>
 
             <div class="text-center space-y-2">
                 <div class="w-12 h-12 rounded-full bg-white text-brand-blue flex items-center justify-center font-bold text-lg mx-auto shadow-sm">
                     <i class="fa-solid fa-truck-fast"></i>
                 </div>
-                <h4 class="font-extrabold text-xs text-brand-navy">On-Time Delivery</h4>
-                <p class="text-[11px] text-slate-500 leading-relaxed font-medium">Express delivery within 30 minutes in select locations.</p>
+                <h4 class="font-extrabold text-xs text-brand-navy">Slot-Based Delivery</h4>
+                <p class="text-[11px] text-slate-500 leading-relaxed font-medium">Fresh same-day delivery in your chosen 1-hour slot.</p>
             </div>
         </div>
     </div>
@@ -464,8 +464,8 @@
                 <div class="w-12 h-12 rounded-full bg-brand-lightblue text-brand-blue flex items-center justify-center font-bold text-lg mx-auto shadow-sm border border-blue-200">
                     <i class="fa-solid fa-box-open"></i>
                 </div>
-                <h4 class="font-extrabold text-xs text-brand-navy">4. Ice Box Packing</h4>
-                <p class="text-[10px] text-slate-500 font-medium">Packed in ice box to retain freshness</p>
+                <h4 class="font-extrabold text-xs text-brand-navy">4. Fresh Packing</h4>
+                <p class="text-[10px] text-slate-500 font-medium">Packed hygienically to retain natural ocean freshness</p>
             </div>
 
             <div class="text-center space-y-2 relative">

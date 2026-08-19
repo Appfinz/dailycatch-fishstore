@@ -19,7 +19,7 @@ class AdminSettingController extends Controller
             'delivery_max_distance_km' => Setting::get('delivery_max_distance_km', '3.0'),
             'preorder_discount_amount' => Setting::get('preorder_discount_amount', '20'),
             'whatsapp_number' => Setting::get('whatsapp_number', '918778199218'),
-            'shop_address' => Setting::get('shop_address', '22g, Thiruvalluvar street, East tambaram, Chennai-59'),
+            'shop_address' => Setting::get('shop_address', '22G, Thiruvalluvar Street, East Tambaram, Chennai – 600059 (Near Vendavarasi Amman Temple, Opposite FASTTRACK Computers)'),
             'shop_phone' => Setting::get('shop_phone', '91 8778199218'),
             'firebase_api_key' => Setting::get('firebase_api_key', ''),
             'firebase_auth_domain' => Setting::get('firebase_auth_domain', ''),
@@ -36,9 +36,16 @@ class AdminSettingController extends Controller
         Setting::set('delivery_free_threshold', $request->delivery_free_threshold ?: '499');
         Setting::set('delivery_max_distance_km', $request->delivery_max_distance_km ?: '3.0');
         Setting::set('default_delivery_radius_km', $request->delivery_max_distance_km ?: '3.0');
+
+        // Sync to primary branch
+        $branch = \App\Models\Branch::first();
+        if ($branch) {
+            $branch->update(['delivery_radius_km' => (float)($request->delivery_max_distance_km ?: 3.0)]);
+        }
+
         Setting::set('preorder_discount_amount', $request->preorder_discount_amount ?: '20');
         Setting::set('whatsapp_number', $request->whatsapp_number ?: '918778199218');
-        Setting::set('shop_address', $request->shop_address ?: '22g, Thiruvalluvar street, East tambaram, Chennai-59');
+        Setting::set('shop_address', $request->shop_address ?: '22G, Thiruvalluvar Street, East Tambaram, Chennai – 600059 (Near Vendavarasi Amman Temple, Opposite FASTTRACK Computers)');
         Setting::set('shop_phone', $request->shop_phone ?: '91 8778199218');
 
         // Save Firebase Config

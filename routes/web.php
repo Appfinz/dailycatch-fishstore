@@ -45,6 +45,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Product & Price Batch Updater
     Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');
     Route::post('/products', [AdminProductController::class, 'store'])->name('products.store');
+    Route::put('/products/{id}', [AdminProductController::class, 'update'])->name('products.update');
     Route::post('/products/quick-price-update', [AdminProductController::class, 'quickPriceUpdate'])->name('products.quick-price-update');
     Route::delete('/products/{id}', [AdminProductController::class, 'destroy'])->name('products.destroy');
 

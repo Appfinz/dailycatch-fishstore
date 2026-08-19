@@ -143,10 +143,6 @@
                 @endforelse
             </div>
 
-            <!-- Pagination -->
-            <div class="pt-6">
-                {{ $products->appends(request()->query())->links() }}
-            </div>
         </main>
 
     </div>

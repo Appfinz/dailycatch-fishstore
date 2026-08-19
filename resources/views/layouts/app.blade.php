@@ -95,7 +95,7 @@
             <div class="flex items-center gap-2 sm:gap-4 overflow-x-auto no-scrollbar whitespace-nowrap">
                 <span><i class="fa-solid fa-star text-amber-400 mr-1"></i> <strong class="text-amber-300">100% Freshness Guarantee</strong></span>
                 <span class="text-white/30">|</span>
-                <span class="hidden sm:inline"><i class="fa-solid fa-truck-fast text-sky-300 mr-1"></i> Ice Box Delivery</span>
+                <span class="hidden sm:inline"><i class="fa-solid fa-truck-fast text-sky-300 mr-1"></i> Fresh Harbor Delivery</span>
             </div>
             <div class="flex items-center gap-2 shrink-0">
                 <a href="tel:+918778199218" class="bg-brand-blue/80 hover:bg-brand-blue text-white px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold inline-flex items-center gap-1 transition-all">
@@ -200,9 +200,10 @@
                 <div>
                     <h4 class="font-extrabold text-xs text-sky-300 uppercase tracking-wider mb-3">Shop Location</h4>
                     <p class="text-xs text-slate-300 leading-relaxed font-medium">
-                        22g, Thiruvalluvar Street,<br>
-                        East Tambaram, Chennai - 600059<br>
-                        Landmark: Near Tambaram Station
+                        22G, Thiruvalluvar Street,<br>
+                        East Tambaram, Chennai – 600059<br>
+                        <span class="text-sky-200">Landmark:</span> Near Vendavarasi Amman Temple,<br>
+                        Opposite FASTTRACK Computers (Xerox Shop)
                     </p>
                 </div>
 
@@ -210,7 +211,7 @@
                     <h4 class="font-extrabold text-xs text-sky-300 uppercase tracking-wider mb-3">Service Hours</h4>
                     <p class="text-xs text-slate-300 leading-relaxed font-medium">
                         Monday - Sunday: 06:00 AM - 08:00 PM<br>
-                        Same-Day Ice Box Delivery: 3.0 KM Radius
+                        Same-Day Fresh Delivery: {{ \App\Models\Setting::get('delivery_max_distance_km', 3.0) }} KM Radius
                     </p>
                 </div>
 
@@ -219,7 +220,7 @@
                     <a href="tel:+918778199218" class="text-sm font-black text-white hover:text-sky-300 flex items-center gap-2 mb-2">
                         <i class="fa-solid fa-phone text-sky-400"></i> +91 8778199218
                     </a>
-                    <a href="https://wa.me/918778199218" target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all">
+                    <a href="https://wa.me/918778199218?text={{ urlencode('Hi Daily Catch, I have an inquiry regarding fresh fish order') }}" target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all">
                         <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp Support
                     </a>
                 </div>
@@ -227,10 +228,20 @@
 
             <div class="border-t border-white/10 mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400 gap-4">
                 <p>© {{ date('Y') }} Daily Catch Fish Shop. All rights reserved.</p>
-                <p>East Tambaram • Chennai - 59</p>
+                <p>East Tambaram • Chennai - 600059</p>
             </div>
         </div>
     </footer>
+
+    <!-- FLOATING ACTION BUTTON (WHATSAPP CONTACT) -->
+    <a href="https://wa.me/918778199218?text={{ urlencode('Hi Daily Catch, I need help with fresh fish ordering') }}" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       class="fixed bottom-20 md:bottom-6 right-5 z-40 bg-emerald-500 hover:bg-emerald-600 text-white p-3.5 sm:px-4 sm:py-3 rounded-full shadow-2xl flex items-center gap-2.5 hover:scale-105 transition-all duration-300 ring-4 ring-emerald-500/20 group"
+       title="Chat on WhatsApp">
+        <i class="fa-brands fa-whatsapp text-2xl text-white"></i>
+        <span class="hidden sm:inline font-black text-xs tracking-wide">WhatsApp Us</span>
+    </a>
 
     <!-- MOBILE STICKY BOTTOM NAVIGATION BAR -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-30 px-3 py-2 flex justify-around items-center text-[10px] font-bold text-slate-600 shadow-2xl">

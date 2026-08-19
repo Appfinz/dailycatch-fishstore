@@ -104,6 +104,21 @@ class OrderApiController extends Controller
 
             $estimatedSubtotal += $itemTotal;
 
+            // Auto-deduct stock quantity & auto-update availability status
+            if ($product) {
+                $newStock = max(0, (float)$product->stock_quantity - $qty);
+                $newStatus = $product->availability_status;
+                if ($newStock <= 0) {
+                    $newStatus = 'out_of_stock';
+                } elseif ($newStock <= 5 && $newStatus === 'in_stock') {
+                    $newStatus = 'limited';
+                }
+                $product->update([
+                    'stock_quantity' => $newStock,
+                    'availability_status' => $newStatus,
+                ]);
+            }
+
             $orderItemsData[] = [
                 'product_id' => $product->id,
                 'cutting_style_id' => $cuttingStyle ? $cuttingStyle->id : null,
@@ -150,7 +165,7 @@ class OrderApiController extends Controller
             'landmark' => $request->landmark,
             'latitude' => $lat,
             'longitude' => $lng,
-            'delivery_slot' => $request->delivery_slot ?: 'Morning Slot (07:00 AM - 10:00 AM)',
+            'delivery_slot' => $request->delivery_slot ?: 'Morning Slot (07:00 AM - 08:00 AM)',
             'is_preorder' => $isPreorder,
             'delivery_date' => $deliveryDate,
             'payment_method' => 'cod', // Cash on Delivery / Pay on Delivery

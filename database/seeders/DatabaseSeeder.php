@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         $branch = Branch::create([
             'name' => 'East Tambaram Main Branch',
             'code' => 'CHE-ET-01',
-            'address' => '22g, Thiruvalluvar street, East tambaram, Chennai-59',
+            'address' => '22G, Thiruvalluvar Street, East Tambaram, Chennai – 600059 (Near Vendavarasi Amman Temple, Opposite FASTTRACK Computers)',
             'city' => 'Chennai',
             'pincode' => '600059',
             'phone' => '918778199218',
@@ -527,10 +527,10 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // 6. Delivery Slots
-        DeliverySlot::create(['name' => 'Early Morning Harbor Slot', 'time_range' => '07:00 AM - 09:30 AM', 'is_active' => true]);
-        DeliverySlot::create(['name' => 'Late Morning Slot', 'time_range' => '10:00 AM - 12:30 PM', 'is_active' => true]);
-        DeliverySlot::create(['name' => 'Afternoon Lunch Catch', 'time_range' => '01:00 PM - 03:30 PM', 'is_active' => true]);
-        DeliverySlot::create(['name' => 'Evening Fresh Catch', 'time_range' => '05:00 PM - 08:00 PM', 'is_active' => true]);
+        DeliverySlot::create(['name' => 'Morning Slot', 'time_range' => '07:00 AM - 08:00 AM', 'is_active' => true]);
+        DeliverySlot::create(['name' => 'Mid-day Slot', 'time_range' => '11:00 AM - 12:00 PM', 'is_active' => true]);
+        DeliverySlot::create(['name' => 'Afternoon Slot', 'time_range' => '02:00 PM - 03:00 PM', 'is_active' => true]);
+        DeliverySlot::create(['name' => 'Evening Slot', 'time_range' => '07:00 PM - 08:00 PM', 'is_active' => true]);
 
         // 7. Coupons
         Coupon::create(['code' => 'CATCH150', 'description' => 'Flat ₹150 OFF on orders above ₹999', 'discount_type' => 'fixed', 'discount_value' => 150.00, 'min_order_amount' => 999.00, 'is_active' => true]);
@@ -544,7 +544,7 @@ class DatabaseSeeder extends Seeder
         Setting::set('delivery_free_threshold', '499', 'Free delivery threshold in INR');
         Setting::set('delivery_max_distance_km', '3.0', 'Max delivery distance in KM');
         Setting::set('preorder_discount_amount', '20', 'Preorder discount amount in INR');
-        Setting::set('shop_address', '22g, Thiruvalluvar street, East tambaram, Chennai-59', 'Primary physical store address');
+        Setting::set('shop_address', '22G, Thiruvalluvar Street, East Tambaram, Chennai – 600059 (Near Vendavarasi Amman Temple, Opposite FASTTRACK Computers)', 'Primary physical store address');
         Setting::set('shop_phone', '91 8778199218', 'Customer care phone number');
         Setting::set('shop_email', 'support@dailycatchfishshop.com', 'Store support email');
 

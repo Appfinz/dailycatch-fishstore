@@ -35,15 +35,20 @@ class CustomerAuthController extends Controller
 
     public function verifyOtp(Request $request)
     {
-        $request->validate([
-            'phone' => 'required|string|min:10|max:10',
-            'otp' => 'required|string|min:4|max:4',
-        ]);
-
         $phone = preg_replace('/[^0-9]/', '', $request->phone);
+        $otp = $request->otp ?: $request->otp_code;
+
+        if (strlen($phone) < 10 || empty($otp)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Please provide valid 10-digit phone number and OTP code.',
+            ], 422);
+        }
+
         $customer = Customer::where('phone', $phone)->first();
 
-        if (!$customer || ($request->otp !== '1234' && $customer->otp_code !== $request->otp)) {
+        // Accept demo code 1234 or matched stored OTP code
+        if (!$customer || ($otp !== '1234' && $customer->otp_code !== $otp)) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Invalid OTP code. Please enter 1234.',

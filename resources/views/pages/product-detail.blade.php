@@ -69,7 +69,7 @@
                 </div>
 
                 <p class="text-xs text-slate-600 mt-3 leading-relaxed font-medium">
-                    {{ $product->description ?: 'Freshly sourced daily from Chennai harbor landings. Handpicked, pre-cleaned, and delivered in food-grade ice boxes.' }}
+                    {{ $product->description ?: 'Freshly sourced daily from Chennai harbor landings. Handpicked, pre-cleaned, and delivered fresh in hygienic food-grade packaging.' }}
                 </p>
             </div>
 
@@ -115,6 +115,9 @@
                     @foreach($product->cuttingStyles as $index => $cs)
                         @php
                             $charge = ($cs->pivot && $cs->pivot->additional_charge !== null) ? (float)$cs->pivot->additional_charge : (float)$cs->additional_charge;
+                            $cutPhoto = ($cs->pivot && !empty($cs->pivot->image)) 
+                                ? $cs->pivot->image 
+                                : ($cs->image ?: ($product->image ?: 'https://images.unsplash.com/photo-1510130318145-ad4f04e849a7?auto=format&fit=crop&w=600&q=80'));
                         @endphp
                         <label onclick="selectCuttingStyle({{ $cs->id }}, {{ $charge }})" 
                                class="cutting-card relative border-2 rounded-2xl p-3 sm:p-4 cursor-pointer transition-all flex flex-col justify-between hover:border-brand-blue bg-white shadow-sm hover:shadow-md {{ $index === 0 ? 'border-brand-blue bg-blue-50/40 ring-4 ring-brand-blue/20' : 'border-slate-200' }}"
@@ -124,7 +127,7 @@
                             <div>
                                 <!-- Enlarged Image for high visibility -->
                                 <div class="w-full h-32 sm:h-36 rounded-xl overflow-hidden mb-3 border border-slate-200 bg-slate-100 relative">
-                                    <img src="{{ $cs->image ?: 'https://images.unsplash.com/photo-1510130318145-ad4f04e849a7?auto=format&fit=crop&w=600&q=80' }}" 
+                                    <img src="{{ $cutPhoto }}" 
                                          alt="{{ $cs->name }}" 
                                          class="w-full h-full object-cover">
                                     @if($charge > 0)

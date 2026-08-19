@@ -82,7 +82,7 @@ class StorefrontController extends Controller
             $query->latest();
         }
 
-        $products = $query->paginate(12);
+        $products = $query->get();
 
         return view('pages.catalog', compact('categories', 'products'));
     }
@@ -125,7 +125,7 @@ class StorefrontController extends Controller
     {
         $branch = Branch::first();
         $settings = [
-            'address' => Setting::get('shop_address', '22g, Thiruvalluvar street, East tambaram, Chennai-59'),
+            'address' => Setting::get('shop_address', '22G, Thiruvalluvar Street, East Tambaram, Chennai – 600059 (Near Vendavarasi Amman Temple, Opposite FASTTRACK Computers)'),
             'phone' => Setting::get('shop_phone', '91 8778199218'),
             'email' => Setting::get('shop_email', 'support@dailycatchfishshop.com'),
             'whatsapp' => Setting::get('whatsapp_number', '918778199218'),
@@ -143,8 +143,9 @@ class StorefrontController extends Controller
     {
         $deliverySlots = DeliverySlot::where('is_active', true)->get();
         $branch = Branch::first();
+        $maxRadius = (float) Setting::get('delivery_max_distance_km', 3.0);
 
-        return view('pages.checkout', compact('deliverySlots', 'branch'));
+        return view('pages.checkout', compact('deliverySlots', 'branch', 'maxRadius'));
     }
 
     public function orderTrack($orderNumber)

@@ -99,8 +99,16 @@
                                     {{ str_replace('_', ' ', $order->status) }}
                                 </span>
                             </td>
-                            <td class="p-4 text-right">
-                                <a href="{{ route('admin.orders.show', $order->id) }}" class="bg-ocean-600 hover:bg-ocean-500 text-white font-bold px-3.5 py-2 rounded-xl text-xs inline-flex items-center gap-1.5 shadow">
+                            <td class="p-4 text-right space-x-2">
+                                @if($order->latitude && $order->longitude)
+                                    <a href="https://www.google.com/maps/dir/?api=1&destination={{ $order->latitude }},{{ $order->longitude }}" 
+                                       target="_blank" 
+                                       title="Open Google Maps Navigation" 
+                                       class="bg-blue-600/30 hover:bg-blue-600 text-blue-300 hover:text-white font-bold p-2 rounded-xl text-xs inline-flex items-center gap-1 border border-blue-500/40 shadow">
+                                        <i class="fa-solid fa-diamond-turn-right text-xs"></i> Maps
+                                    </a>
+                                @endif
+                                <a href="{{ route('admin.orders.show', $order->id) }}" class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-3.5 py-2 rounded-xl text-xs inline-flex items-center gap-1.5 shadow">
                                     <i class="fa-solid fa-scale-balanced"></i> Weigh & Update
                                 </a>
                             </td>

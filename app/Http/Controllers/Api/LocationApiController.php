@@ -23,7 +23,7 @@ class LocationApiController extends Controller
         $branch = Branch::first();
         $lat2 = $branch ? (float) $branch->latitude : 12.9249;
         $lon2 = $branch ? (float) $branch->longitude : 80.1278;
-        $maxRadiusKm = $branch ? (float) $branch->delivery_radius_km : 3.0;
+        $maxRadiusKm = (float) Setting::get('delivery_max_distance_km', ($branch ? (float) $branch->delivery_radius_km : 3.0));
 
         // Haversine formula
         $earthRadiusKm = 6371;

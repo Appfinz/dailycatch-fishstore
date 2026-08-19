@@ -87,7 +87,7 @@
         }).addTo(lMap);
 
         L.marker([12.9249, 80.1278]).addTo(lMap)
-            .bindPopup("<b>Daily Catch Fish Shop</b><br>22g, Thiruvalluvar street, East Tambaram, Chennai-59")
+            .bindPopup("<b>Daily Catch Fish Shop</b><br>22G, Thiruvalluvar Street, East Tambaram, Chennai – 600059<br>Near Vendavarasi Amman Temple")
             .openPopup();
     });
 </script>

@@ -21,6 +21,32 @@
                             blue: '#1E6DEB',
                             lightblue: '#D8ECF8',
                             bg: '#F8FAFC'
+                        },
+                        logonavy: '#081E3F',
+                        logoocean: '#1E6DEB',
+                        ocean: {
+                            50: '#F0F7FF',
+                            100: '#E0EFFE',
+                            200: '#BAE0FD',
+                            300: '#7CC4FA',
+                            400: '#36A5F6',
+                            500: '#0C87EB',
+                            600: '#026BC9',
+                            700: '#0355A3',
+                            800: '#074886',
+                            900: '#0C3D6F',
+                        },
+                        aqua: {
+                            50: '#F0FDFA',
+                            100: '#CCFBF1',
+                            200: '#99F6E4',
+                            300: '#5EEAD4',
+                            400: '#2DD4BF',
+                            500: '#14B8A6',
+                            600: '#0D9488',
+                            700: '#0F766E',
+                            800: '#115E59',
+                            900: '#134E4A',
                         }
                     },
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
